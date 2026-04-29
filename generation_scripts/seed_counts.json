@@ -1,0 +1,49 @@
+{
+  "total_tasks": 188,
+  "mode_scope": "other_only",
+  "split_counts": {
+    "train": 94,
+    "dev": 56,
+    "held_out": 38
+  },
+  "source_mode_counts": {
+    "trace_derived": 75,
+    "programmatic": 75,
+    "hand_authored_adversarial": 38
+  },
+  "source_mode_attempts": {
+    "trace_derived": {
+      "attempted": 80,
+      "accepted": 75
+    },
+    "programmatic": {
+      "attempted": 80,
+      "accepted": 75
+    },
+    "multi_llm_synthesis": {
+      "attempted": 0,
+      "accepted": 0
+    },
+    "hand_authored_adversarial": {
+      "attempted": 40,
+      "accepted": 38
+    }
+  },
+  "generated_at": "2026-04-29T00:00:00+00:00",
+  "routing_policy": {
+    "frontier_seed_generator_model": "anthropic/claude-sonnet-4.6",
+    "cheap_variation_generator_model": "deepseek/deepseek-chat-v3.1",
+    "cheap_judge_model": "mistralai/mistral-small-2603",
+    "eval_judge_model": "openai/gpt-5-mini",
+    "no_same_family_generator_and_judge": true,
+    "eval_calibration_sample_size": 0,
+    "adversarial_min_score_threshold": 3,
+    "adversarial_judge_bypass": true,
+    "trace_programmatic_judge_bypass": true,
+    "eval_calibration_scope": "multi_llm_synthesis_only"
+  },
+  "pairwise_selection": {
+    "enabled_for_similar_synthesis_candidates": true,
+    "judge_model": "mistralai/mistral-small-2603"
+  }
+}

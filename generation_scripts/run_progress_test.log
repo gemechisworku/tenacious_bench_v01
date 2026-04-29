@@ -1,0 +1,49 @@
+2026-04-29T19:18:52.631833+00:00 api_call_error model=mistralai/mistral-small attempt=2 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:18:55.633078+00:00 api_call_start model=mistralai/mistral-small attempt=3
+2026-04-29T19:18:57.665194+00:00 api_call_error model=mistralai/mistral-small attempt=3 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:19:02.166915+00:00 api_call_start model=mistralai/mistral-small attempt=1
+2026-04-29T19:19:04.192551+00:00 api_call_error model=mistralai/mistral-small attempt=1 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:19:05.694751+00:00 api_call_start model=mistralai/mistral-small attempt=2
+2026-04-29T19:19:07.742339+00:00 api_call_error model=mistralai/mistral-small attempt=2 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:19:10.743870+00:00 api_call_start model=mistralai/mistral-small attempt=3
+2026-04-29T19:19:12.775212+00:00 api_call_error model=mistralai/mistral-small attempt=3 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:19:17.276924+00:00 api_call_start model=mistralai/mistral-small attempt=1
+2026-04-29T19:19:19.321463+00:00 api_call_error model=mistralai/mistral-small attempt=1 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:19:20.822417+00:00 api_call_start model=mistralai/mistral-small attempt=2
+2026-04-29T19:19:22.871412+00:00 api_call_error model=mistralai/mistral-small attempt=2 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:19:25.873170+00:00 api_call_start model=mistralai/mistral-small attempt=3
+2026-04-29T19:19:27.912702+00:00 api_call_error model=mistralai/mistral-small attempt=3 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:19:32.415263+00:00 api_call_start model=mistralai/mistral-small attempt=1
+2026-04-29T19:19:34.447673+00:00 api_call_error model=mistralai/mistral-small attempt=1 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:19:35.948592+00:00 api_call_start model=mistralai/mistral-small attempt=2
+2026-04-29T19:19:38.012992+00:00 api_call_error model=mistralai/mistral-small attempt=2 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:19:41.014349+00:00 api_call_start model=mistralai/mistral-small attempt=3
+2026-04-29T19:19:43.060911+00:00 api_call_error model=mistralai/mistral-small attempt=3 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:19:47.562681+00:00 api_call_start model=mistralai/mistral-small attempt=1
+2026-04-29T19:19:49.596411+00:00 api_call_error model=mistralai/mistral-small attempt=1 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:19:51.097816+00:00 api_call_start model=mistralai/mistral-small attempt=2
+2026-04-29T19:19:53.127385+00:00 api_call_error model=mistralai/mistral-small attempt=2 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:19:56.128265+00:00 api_call_start model=mistralai/mistral-small attempt=3
+2026-04-29T19:19:58.182356+00:00 api_call_error model=mistralai/mistral-small attempt=3 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:20:02.684486+00:00 api_call_start model=mistralai/mistral-small attempt=1
+2026-04-29T19:20:04.724920+00:00 api_call_error model=mistralai/mistral-small attempt=1 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:20:06.226936+00:00 api_call_start model=mistralai/mistral-small attempt=2
+2026-04-29T19:20:08.289099+00:00 api_call_error model=mistralai/mistral-small attempt=2 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:20:11.290835+00:00 api_call_start model=mistralai/mistral-small attempt=3
+2026-04-29T19:20:13.322712+00:00 api_call_error model=mistralai/mistral-small attempt=3 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:20:17.824965+00:00 api_call_start model=mistralai/mistral-small attempt=1
+2026-04-29T19:20:19.867366+00:00 api_call_error model=mistralai/mistral-small attempt=1 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:20:21.369299+00:00 api_call_start model=mistralai/mistral-small attempt=2
+2026-04-29T19:20:23.425634+00:00 api_call_error model=mistralai/mistral-small attempt=2 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:20:26.426893+00:00 api_call_start model=mistralai/mistral-small attempt=3
+2026-04-29T19:20:28.474127+00:00 api_call_error model=mistralai/mistral-small attempt=3 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:20:32.976291+00:00 mode_progress mode=trace_derived attempted=650 accepted=0
+2026-04-29T19:20:32.977634+00:00 api_call_start model=mistralai/mistral-small attempt=1
+2026-04-29T19:20:35.018749+00:00 api_call_error model=mistralai/mistral-small attempt=1 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:20:36.520412+00:00 api_call_start model=mistralai/mistral-small attempt=2
+2026-04-29T19:20:38.560038+00:00 api_call_error model=mistralai/mistral-small attempt=2 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:20:41.561655+00:00 api_call_start model=mistralai/mistral-small attempt=3
+2026-04-29T19:20:43.591448+00:00 api_call_error model=mistralai/mistral-small attempt=3 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:20:48.093566+00:00 api_call_start model=mistralai/mistral-small attempt=1
+2026-04-29T19:20:50.115232+00:00 api_call_error model=mistralai/mistral-small attempt=1 error=<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+2026-04-29T19:20:51.616593+00:00 api_call_start model=mistralai/mistral-small attempt=2

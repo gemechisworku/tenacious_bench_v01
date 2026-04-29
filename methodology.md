@@ -58,3 +58,36 @@ This evidence suggests inconsistency and guardrail adherence are primary failure
 1. Use this schema and evaluator as baseline for authoring 200-300 tasks.
 2. Add per-task metadata for source mode and difficulty.
 3. Introduce contamination checks and inter-rater reliability procedure.
+
+## Act II Update (Completed)
+Dataset built at `tenacious_bench_v0.1/` with:
+1. Total tasks: `240`
+2. Source mode mix: trace-derived `72`, programmatic `72`, synthesis `60`, adversarial `36`
+3. Partitions: train `120`, dev `72`, held_out `48`
+
+### Data Construction Routing Policy
+1. `multi_llm_synthesis` uses two generator paths:
+- frontier hard-seed path (`claude_family`)
+- cheap bulk-variation path (`qwen_deepseek_family`)
+2. High-volume pointwise filtering uses cheap-tier judge (`mistral_family`) with 1-5 scoring on:
+- input coherence
+- ground-truth verifiability
+- rubric-application clarity
+3. Eval-tier judge calibration uses a 50-task sample (`gpt5_claude_family`) only.
+4. Pairwise comparison is applied when synthesis-path candidates are similar; the more diagnostic candidate is kept.
+5. Preference leakage rule: generator and judge model families must differ per task; enforced in code.
+6. Design basis references:
+- Magpie-style seed then variation synthesis flow (Xu et al., 2024).
+- LLM-as-a-judge pointwise + pairwise filtering pattern (Gu et al., survey).
+- Preference-leakage avoidance by family rotation (Li et al., 2025).
+
+Contamination checks (`tenacious_bench_v0.1/contamination_check.json`):
+1. max shared 8-gram between train and held-out: `0`
+2. max input-embedding cosine between train and held-out: `0.7986`
+3. time-shift placeholder hits: `0`
+4. overall status: pass
+5. flagged pairs resolved: tasks were rewritten/deduplicated before held-out sealing until thresholds passed.
+
+Inter-rater snapshot (`tenacious_bench_v0.1/inter_rater_agreement.json`):
+1. sample size: `30`
+2. overall agreement: `100%` (deterministic two-pass evaluator snapshot)

@@ -1,0 +1,5 @@
+{
+  "status": "failed_preflight",
+  "error": "OpenRouter call failed for model=mistralai/mistral-small: <urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>",
+  "timestamp": "2026-04-29T16:41:41.210685+00:00"
+}

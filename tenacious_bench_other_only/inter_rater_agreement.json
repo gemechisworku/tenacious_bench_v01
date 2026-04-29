@@ -1,0 +1,523 @@
+{
+  "sample_size": 30,
+  "agreement_pct_by_marker": {
+    "direct": 100.0,
+    "grounded": 100.0,
+    "honest": 100.0,
+    "professional": 100.0,
+    "non_condescending": 100.0
+  },
+  "overall_pct": 100.0,
+  "rows": [
+    {
+      "task_id": "TBENCH-TRA-00001",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00002",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00003",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00004",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00005",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00006",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00007",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00008",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00009",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00010",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00011",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00012",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00013",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00014",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00015",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00016",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00017",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00018",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00019",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00020",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00021",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00022",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00023",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00024",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00025",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00026",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00027",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00028",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00029",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    },
+    {
+      "task_id": "TBENCH-TRA-00030",
+      "pass_a": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      },
+      "pass_b": {
+        "direct": true,
+        "grounded": true,
+        "honest": true,
+        "professional": true,
+        "non_condescending": true
+      }
+    }
+  ]
+}

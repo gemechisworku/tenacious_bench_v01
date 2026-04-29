@@ -1,0 +1,13 @@
+{
+  "status": "completed",
+  "total_tasks": 3,
+  "split_counts": {
+    "train": 1,
+    "dev": 0,
+    "held_out": 2
+  },
+  "api_successful_requests": 12,
+  "api_failed_requests": 0,
+  "api_consecutive_failed_requests": 0,
+  "timestamp": "2026-04-29T16:49:46.355326+00:00"
+}

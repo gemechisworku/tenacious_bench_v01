@@ -1,96 +1,120 @@
 # Tenacious Sales Agent Evaluation Bench (Week 11)
 
-## Project Purpose (Simple Explanation)
-This project is about proving whether a sales AI agent actually works for Tenacious, not just on generic public benchmarks.
+## Overview
+This repo builds and evaluates a Tenacious-specific sales-agent benchmark.
 
-In Week 10, the agent could generate outreach and handle sales workflows. In this week, the goal is to:
-1. Build a **Tenacious-specific evaluation benchmark** (dataset + scoring rules).
-2. Train one small model component to fix a real failure mode.
-3. Measure improvement with proper ablations and statistical confidence.
-4. Publish reproducible artifacts (dataset, model/judge if applicable, technical write-up, community contribution).
+Main outcomes:
+1. Audit of benchmark gaps from Week 10 evidence.
+2. Machine-verifiable schema + scoring evaluator.
+3. Authored dataset with `train/dev/held_out` partitions.
+4. Routed multi-LLM generation and judge filtering pipeline.
 
-The core idea is: **build the bench, test the agent on the bench, improve the agent, and publish evidence**.
+Core artifacts:
+1. [audit_memo.md](./audit_memo.md)
+2. [schema.json](./schema.json)
+3. [scoring_evaluator.py](./scoring_evaluator.py)
+4. [methodology.md](./methodology.md)
+5. [datasheet.md](./tenacious_bench_v0.1/datasheet.md)
+6. [build_stage2_dataset.py](./generation_scripts/build_stage2_dataset.py)
 
-## What Should Be Done (Step-by-Step)
+## Repo Usage
+Typical flow:
+1. Run Stage 2 generation pipeline (smoke test first).
+2. Inspect progress, status, judge logs, contamination check, and cost log.
+3. Re-run full dataset generation (240 tasks) once smoke test is stable.
+4. Use `scoring_evaluator.py` to evaluate outputs/tasks.
 
-### Step 0: Pre-flight setup
-1. Confirm tooling: Python environment, Hugging Face token, OpenRouter key, and training environment (Colab/RunPod).
-2. Verify Week 10 artifacts exist and are readable (traces, probes, taxonomy).
-3. Initialize cost tracking (all API + compute spend logged).
-4. Draft initial path declaration (A, B, or C).
+## Directory Map
+1. `docs/`: SRS and implementation plan.
+2. `week_10_artifacts/`: trace and probe inputs used for benchmark construction.
+3. `tenacious_sales_data/`: style/policy/seed data.
+4. `generation_scripts/`: dataset generation pipeline + prompts + logs.
+5. `tenacious_bench_v0.1/`: generated dataset partitions and reports.
 
-### Step 1: ACT I - Audit and Schema Design
-1. Audit where generic benchmarks miss Tenacious-specific sales quality.
-2. Use Week 10 probes and traces as evidence for those gaps.
-3. Design a machine-verifiable benchmark schema (inputs, output, rubric, score logic).
-4. Implement a scoring evaluator script and test on sample tasks.
+## Setup
+Requirements:
+1. Python 3.11+ (tested on Python 3.13).
+2. OpenRouter API key in `.env` as `OPENROUTER_API_KEY=...`.
 
-Output: `audit_memo.md`, `schema.json`, `scoring_evaluator.py`, early `methodology.md`.
+Optional sanity check:
+```powershell
+python --version
+```
 
-### Step 2: ACT II - Dataset Authoring
-1. Build 200-300 tasks using four sources:
-   - trace-derived,
-   - programmatic sweeps,
-   - multi-LLM synthesis,
-   - hand-authored adversarial tasks.
-2. Filter generated tasks with judge checks.
-3. Partition dataset into train/dev/held-out (50/30/20).
-4. Run contamination checks (n-gram, embedding similarity, time-shift).
-5. Run inter-rater agreement process and revise rubric if needed.
-6. Write full datasheet.
+## Run Generation Pipeline
+### 1) Smoke test (recommended first)
+```powershell
+python generation_scripts/build_stage2_dataset.py `
+  --frontier-generator-model anthropic/claude-sonnet-4.6 `
+  --cheap-generator-model deepseek/deepseek-chat-v3.1 `
+  --cheap-judge-model mistralai/mistral-small-2603 `
+  --eval-judge-model openai/gpt-5-mini `
+  --total-tasks 3 `
+  --eval-calibration-size 3 `
+  --max-attempts-per-mode 20 `
+  --max-consecutive-request-failures 4 `
+  --request-timeout-s 25 `
+  --snapshot-every 1 `
+  --progress-log generation_scripts/run_progress_smoke.log `
+  --status-json generation_scripts/run_status_smoke.json `
+  --cost-log-md cost_log_smoke.md `
+  --cost-log-jsonl generation_scripts/api_call_cost_log_smoke.jsonl
+```
 
-Output: `tenacious_bench_v0.1/`, `datasheet.md`, generation scripts/logs, contamination report, inter-rater agreement report.
+### 2) Full run (240 tasks)
+```powershell
+python generation_scripts/build_stage2_dataset.py `
+  --frontier-generator-model anthropic/claude-sonnet-4.6 `
+  --cheap-generator-model deepseek/deepseek-chat-v3.1 `
+  --cheap-judge-model mistralai/mistral-small-2603 `
+  --eval-judge-model openai/gpt-5-mini `
+  --total-tasks 240 `
+  --eval-calibration-size 50 `
+  --max-attempts-per-mode 500 `
+  --max-consecutive-request-failures 8 `
+  --request-timeout-s 30 `
+  --snapshot-every 5 `
+  --progress-log generation_scripts/run_progress_full.log `
+  --status-json generation_scripts/run_status_full.json `
+  --cost-log-md cost_log.md `
+  --cost-log-jsonl generation_scripts/api_call_cost_log.jsonl
+```
 
-### Step 3: ACT III - Method Selection and Training Data Prep
-1. Finalize path choice:
-   - Path A: SFT generator component,
-   - Path B: preference-tuned judge/critic,
-   - Path C: process reward model.
-2. Convert training partition into path-specific format.
-3. Apply leakage and contamination safeguards.
-4. Document rationale from Week 10 evidence + paper citations.
+## Where to Watch Progress
+1. Live step log: `generation_scripts/run_progress_*.log`
+2. Current state snapshot: `generation_scripts/run_status_*.json`
+3. Per-call API usage/cost: `generation_scripts/api_call_cost_log*.jsonl`
+4. Final cost summary: `cost_log*.md`
 
-Output: `training_data/`, `methodology_rationale.md`, updated contamination checks.
+## Generated Outputs
+1. `tenacious_bench_v0.1/train/tasks.jsonl`
+2. `tenacious_bench_v0.1/dev/tasks.jsonl`
+3. `tenacious_bench_v0.1/held_out/tasks.jsonl`
+4. `tenacious_bench_v0.1/contamination_check.json`
+5. `tenacious_bench_v0.1/inter_rater_agreement.json`
+6. `generation_scripts/judge_filter_log.jsonl`
+7. `generation_scripts/judge_pairwise_log.jsonl`
+8. `generation_scripts/eval_calibration_log.jsonl`
+9. `generation_scripts/seed_counts.json`
 
-### Step 4: ACT IV - Train, Ablate, Measure
-1. Run one core LoRA training job.
-2. Evaluate on sealed held-out with required ablations:
-   - Delta A: trained vs Week 10 baseline,
-   - Delta B: trained vs prompt-only intervention,
-   - Delta C: compare with Week 10 retail benchmark score (if already available),
-   - cost/latency Pareto.
-3. Compute confidence intervals and significance.
-4. Save traces, metrics, and run logs.
+## Evaluate Tasks
+Run evaluator on schema examples:
+```powershell
+python scoring_evaluator.py --tasks schema.json --out stage1_eval_results.json
+```
 
-Output: `ablation_results.json`, `held_out_traces.jsonl`, training logs, model card (if applicable).
+## Rough Runtime and Cost Estimates
+Based on a real API-backed 3-task smoke run in this repo:
+1. 3-task smoke run took ~2.2 minutes.
+2. Observed cost was about `$0.0139` total for that smoke run.
 
-### Step 5: ACT V - Publish and Engage
-1. Publish dataset to Hugging Face with datasheet + license.
-2. Publish adapter/model (if Path A or C) with model card.
-3. Publish technical blog post with honest results (including negative findings).
-4. Submit one community artifact (issue/PR/submission).
-5. Deliver two-page executive memo and demo video.
+Rough full-run estimates for 240 tasks:
+1. Runtime: ~1.5 to 4 hours depending on model latency, retries, and temporary API/network issues.
+2. Cost: ~`$1` to `$6` typical range with these model tiers; can be higher if retries spike or if output lengths increase.
 
-Output: public URLs, `memo.pdf`, `evidence_graph.json`, final repo completion.
+These are rough operational estimates, not a hard guarantee.
 
-## Expected Deliverables
-
-### Interim (Wednesday, 21:00 UTC)
-1. Audit, schema, evaluator.
-2. Dataset partitions with datasheet.
-3. Contamination output + inter-rater agreement.
-4. Methodology draft + early synthesis memos.
-
-### Final (Saturday, 21:00 UTC)
-1. Training data + training scripts/logs.
-2. Ablation and held-out results with significance.
-3. Public dataset/model/blog/community artifact URLs.
-4. Two-page memo, demo video, evidence graph.
-
-## Decision Points Requiring Your Confirmation
-This repo includes a recommended plan in `docs/implementation_plan.md`, but these choices should be confirmed by you:
-1. Training path (A/B/C).
-2. Community engagement route (GitHub issue vs PR vs workshop/community submission).
-3. Compute strategy (Colab-only vs Colab with RunPod fallback).
-
-See the implementation plan for options and recommendations.
+## Current Status
+1. ACT I and ACT II artifacts are implemented.
+2. Real OpenRouter-backed pipeline is implemented with fail-fast and visibility logging.
+3. Remaining work is ACT III-V training/ablation/publication packaging.
