@@ -16,6 +16,8 @@ Core artifacts:
 4. [methodology.md](./methodology.md)
 5. [datasheet.md](./tenacious_bench_v0.1/datasheet.md)
 6. [build_stage2_dataset.py](./generation_scripts/build_stage2_dataset.py)
+7. [common_reading_01_synthetic_data_tradeoff.md](./synthesis_memos/common_reading_01_synthetic_data_tradeoff.md)
+8. [common_reading_02_llm_judge_scope.md](./synthesis_memos/common_reading_02_llm_judge_scope.md)
 
 ## Repo Usage
 Typical flow:
@@ -30,6 +32,7 @@ Typical flow:
 3. `tenacious_sales_data/`: style/policy/seed data.
 4. `generation_scripts/`: dataset generation pipeline + prompts + logs.
 5. `tenacious_bench_v0.1/`: generated dataset partitions and reports.
+6. `synthesis_memos/`: common-reading memos with paper design disagreements grounded in Week 10/11 evidence.
 
 ## Setup
 Requirements:
