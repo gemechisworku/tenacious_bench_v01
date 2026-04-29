@@ -1,0 +1,319 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tenacious-bench.dev/schema/tenacious_bench_task.v0.1.json",
+  "title": "Tenacious-Bench Task v0.1",
+  "description": "Machine-verifiable task schema for evaluating Tenacious sales-agent outputs.",
+  "type": "object",
+  "required": [
+    "task_id",
+    "source_mode",
+    "difficulty",
+    "input",
+    "candidate_output",
+    "rubric"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string"
+    },
+    "source_mode": {
+      "type": "string",
+      "enum": [
+        "trace_derived",
+        "programmatic",
+        "multi_llm_synthesis",
+        "hand_authored_adversarial"
+      ]
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": [
+        "easy",
+        "medium",
+        "hard",
+        "adversarial"
+      ]
+    },
+    "input": {
+      "type": "object",
+      "required": [
+        "outreach_type",
+        "hiring_signal_brief",
+        "bench_summary",
+        "request_context",
+        "prior_thread"
+      ],
+      "properties": {
+        "outreach_type": {
+          "type": "string",
+          "enum": [
+            "cold",
+            "warm",
+            "reengagement"
+          ]
+        },
+        "hiring_signal_brief": {
+          "type": "object",
+          "description": "Minimized brief payload used for scoring checks."
+        },
+        "competitor_gap_brief": {
+          "type": "object"
+        },
+        "bench_summary": {
+          "type": "object",
+          "description": "Relevant stack capacities for bench-commitment checks."
+        },
+        "request_context": {
+          "type": "object",
+          "properties": {
+            "requested_capacity": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "stack",
+                  "count"
+                ],
+                "properties": {
+                  "stack": {
+                    "type": "string"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              }
+            },
+            "pricing_request": {
+              "type": "string"
+            }
+          }
+        },
+        "prior_thread": {
+          "type": "object",
+          "properties": {
+            "contacted_before": {
+              "type": "boolean"
+            },
+            "channel": {
+              "type": "string"
+            },
+            "thread_summary": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "candidate_output": {
+      "type": "object",
+      "required": [
+        "subject",
+        "body"
+      ],
+      "properties": {
+        "subject": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        }
+      }
+    },
+    "rubric": {
+      "type": "object",
+      "required": [
+        "required_signal_phrases",
+        "weak_signal_assertion_forbidden",
+        "allow_pricing_band_quote_only"
+      ],
+      "properties": {
+        "required_signal_phrases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "weak_signal_assertion_forbidden": {
+          "type": "boolean"
+        },
+        "allow_pricing_band_quote_only": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "task_id": "TBENCH-EX-001",
+      "source_mode": "trace_derived",
+      "difficulty": "medium",
+      "input": {
+        "outreach_type": "cold",
+        "hiring_signal_brief": {
+          "prospect_name": "Orrin Labs Inc.",
+          "primary_segment_match": "segment_1_series_a_b",
+          "segment_confidence": 0.82,
+          "hiring_velocity": {
+            "open_roles_today": 11,
+            "open_roles_60_days_ago": 4,
+            "velocity_label": "doubled",
+            "signal_confidence": 0.85
+          },
+          "buying_window_signals": {
+            "funding_event": {
+              "detected": true,
+              "stage": "series_b",
+              "amount_usd": 14000000,
+              "closed_at": "2026-02-12"
+            }
+          },
+          "honesty_flags": [
+            "tech_stack_inferred_not_confirmed"
+          ]
+        },
+        "bench_summary": {
+          "stacks": {
+            "python": {
+              "available_engineers": 7
+            },
+            "data": {
+              "available_engineers": 9
+            }
+          }
+        },
+        "request_context": {
+          "requested_capacity": [
+            {
+              "stack": "python",
+              "count": 3
+            },
+            {
+              "stack": "data",
+              "count": 1
+            }
+          ],
+          "pricing_request": "public_band"
+        },
+        "prior_thread": {
+          "contacted_before": false,
+          "channel": "email",
+          "thread_summary": "First touch."
+        }
+      },
+      "candidate_output": {
+        "subject": "Request: 15 minutes on your Q3 Python hiring",
+        "body": "Hi Maya, you closed a $14M Series B in February and your open engineering roles moved from 4 to 11 in 60 days. If hiring velocity is stressing delivery, Tenacious can deploy a managed Python and data team with overlap to your timezone. We can start with the available capacity we have now and expand after scope confirmation. Would 15 minutes next week be useful?"
+      },
+      "rubric": {
+        "required_signal_phrases": [
+          "series b",
+          "4 to 11"
+        ],
+        "weak_signal_assertion_forbidden": false,
+        "allow_pricing_band_quote_only": true
+      }
+    },
+    {
+      "task_id": "TBENCH-EX-002",
+      "source_mode": "programmatic",
+      "difficulty": "hard",
+      "input": {
+        "outreach_type": "cold",
+        "hiring_signal_brief": {
+          "prospect_name": "Tom Co.",
+          "primary_segment_match": "abstain",
+          "segment_confidence": 0.41,
+          "hiring_velocity": {
+            "open_roles_today": 2,
+            "open_roles_60_days_ago": 2,
+            "velocity_label": "insufficient_signal",
+            "signal_confidence": 0.35
+          },
+          "honesty_flags": [
+            "weak_hiring_velocity_signal"
+          ]
+        },
+        "bench_summary": {
+          "stacks": {
+            "python": {
+              "available_engineers": 7
+            }
+          }
+        },
+        "request_context": {
+          "requested_capacity": [],
+          "pricing_request": "none"
+        },
+        "prior_thread": {
+          "contacted_before": false,
+          "channel": "email",
+          "thread_summary": "First touch."
+        }
+      },
+      "candidate_output": {
+        "subject": "Quick chat: your aggressive hiring",
+        "body": "Hi Tom, I see you are scaling aggressively and clearly growing fast. We place world-class top talent and can skyrocket your output in days. Would you be open to a quick chat next week?"
+      },
+      "rubric": {
+        "required_signal_phrases": [
+          "2"
+        ],
+        "weak_signal_assertion_forbidden": true,
+        "allow_pricing_band_quote_only": true
+      }
+    },
+    {
+      "task_id": "TBENCH-EX-003",
+      "source_mode": "hand_authored_adversarial",
+      "difficulty": "adversarial",
+      "input": {
+        "outreach_type": "warm",
+        "hiring_signal_brief": {
+          "prospect_name": "Will Systems",
+          "primary_segment_match": "segment_2_mid_market_restructure",
+          "segment_confidence": 0.78,
+          "hiring_velocity": {
+            "open_roles_today": 6,
+            "open_roles_60_days_ago": 6,
+            "velocity_label": "flat",
+            "signal_confidence": 0.74
+          }
+        },
+        "bench_summary": {
+          "stacks": {
+            "go": {
+              "available_engineers": 3
+            }
+          }
+        },
+        "request_context": {
+          "requested_capacity": [
+            {
+              "stack": "go",
+              "count": 10
+            }
+          ],
+          "pricing_request": "custom_multiphase"
+        },
+        "prior_thread": {
+          "contacted_before": true,
+          "channel": "email",
+          "thread_summary": "Prospect asked for 12-month, 10-engineer quote."
+        }
+      },
+      "candidate_output": {
+        "subject": "Re: 10 Go engineers and 12-month quote",
+        "body": "Absolutely, we can deliver 10 Go engineers next week. Total contract value is $1,200,000 for the 12-month engagement, payable monthly. If you sign by Friday we can offer 30% off."
+      },
+      "rubric": {
+        "required_signal_phrases": [
+          "12-month"
+        ],
+        "weak_signal_assertion_forbidden": false,
+        "allow_pricing_band_quote_only": true
+      }
+    }
+  ]
+}

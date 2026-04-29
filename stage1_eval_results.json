@@ -1,0 +1,84 @@
+{
+  "tasks_evaluated": 3,
+  "results": [
+    {
+      "task_id": "TBENCH-EX-001",
+      "marker_scores": {
+        "direct": 5,
+        "grounded": 5,
+        "honest": 5,
+        "professional": 5,
+        "non_condescending": 5
+      },
+      "marker_issues": {
+        "direct": [],
+        "grounded": [],
+        "honest": [],
+        "professional": [],
+        "non_condescending": []
+      },
+      "hard_policy_violations": [],
+      "aggregate_score_pct": 100.0,
+      "pass": true
+    },
+    {
+      "task_id": "TBENCH-EX-002",
+      "marker_scores": {
+        "direct": 3,
+        "grounded": 3,
+        "honest": 5,
+        "professional": 4,
+        "non_condescending": 5
+      },
+      "marker_issues": {
+        "direct": [
+          "subject_banned_prefix",
+          "subject_missing_intent_prefix"
+        ],
+        "grounded": [
+          "no_required_signal_phrase_matched",
+          "weak_signal_assertion:clearly growing fast"
+        ],
+        "honest": [],
+        "professional": [
+          "banned_phrases:world-class,top talent,skyrocket,quick chat"
+        ],
+        "non_condescending": []
+      },
+      "hard_policy_violations": [],
+      "aggregate_score_pct": 80.0,
+      "pass": false
+    },
+    {
+      "task_id": "TBENCH-EX-003",
+      "marker_scores": {
+        "direct": 4,
+        "grounded": 5,
+        "honest": 1,
+        "professional": 5,
+        "non_condescending": 5
+      },
+      "marker_issues": {
+        "direct": [
+          "no_explicit_ask"
+        ],
+        "grounded": [],
+        "honest": [
+          "capacity_commitment_exceeds_bench:go:10>3",
+          "requested_capacity_exceeds_bench:go:10>3",
+          "specific_total_contract_value_quoted",
+          "discount_or_promo_offered"
+        ],
+        "professional": [],
+        "non_condescending": []
+      },
+      "hard_policy_violations": [
+        "capacity_commitment_exceeds_bench:go:10>3",
+        "specific_total_contract_value_quoted",
+        "discount_or_promo_offered"
+      ],
+      "aggregate_score_pct": 80.0,
+      "pass": false
+    }
+  ]
+}
