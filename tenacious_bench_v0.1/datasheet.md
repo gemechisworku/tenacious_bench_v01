@@ -8,18 +8,18 @@ Primary benchmark goal:
 2. Support measurable before/after evaluation of Week 11 model interventions.
 
 ## 2) Composition
-Total tasks: `240`
+Total tasks: `250`
 
 Source-mode composition:
-1. `trace_derived`: 72 (30%)
-2. `programmatic`: 72 (30%)
-3. `multi_llm_synthesis` (offline local surrogate route): 60 (25%)
-4. `hand_authored_adversarial`: 36 (15%)
+1. `trace_derived`: 75 (30.0%)
+2. `programmatic`: 75 (30.0%)
+3. `multi_llm_synthesis`: 62 (24.8%)
+4. `hand_authored_adversarial`: 38 (15.2%)
 
 Partitions:
-1. `train`: 120 (50%)
-2. `dev`: 72 (30%)
-3. `held_out`: 48 (20%)
+1. `train`: 125 (50.0%)
+2. `dev`: 75 (30.0%)
+3. `held_out`: 50 (20.0%)
 
 Failure-dimension coverage (targeted from Week 10 taxonomy):
 1. ICP/segment decision failures (`ICP-*`)
@@ -55,11 +55,14 @@ Inputs used:
 Generation pipeline:
 1. Deterministic scenario synthesis with fixed seed (`42`).
 2. Four source-mode routes with target ratios.
-3. Pointwise judge filter over each candidate task (input coherence, verifiability, rubric clarity; threshold >= 4/5 per dimension).
-4. Pairwise judge comparison for similar synthesis-path candidates; keep more diagnostic task.
-5. Cheap-tier judge for high-volume filtering and eval-tier judge for 50-task calibration sample.
-6. Partitioning (50/30/20).
-7. Contamination checks on held-out versus train.
+3. Multi-LLM synthesis route uses frontier + cheap generators, followed by pointwise and pairwise judge filtering.
+4. Non-synthesis routes (trace-derived, programmatic, adversarial) were retained from deterministic/task-authored routes in final build without additional LLM-judge filtering.
+5. Two separate finalized runs were merged (synthesis-only + other-only), then globally deduplicated and globally repartitioned to restore one consistent train/dev/held-out split.
+6. Partitioning target remains 50/30/20 at merged-dataset level.
+7. Contamination checks run on final merged split (held-out versus train).
+
+Merge artifact:
+1. `tenacious_bench_v0.1/merge_report.json` documents source run sizes, dedup result, selected split seed, and final counts.
 
 ## 4) Preprocessing / Cleaning / Labeling
 Preprocessing steps:
@@ -71,10 +74,12 @@ Labeling protocol:
 1. Machine scoring via `scoring_evaluator.py` using five markers:
 `direct`, `grounded`, `honest`, `professional`, `non_condescending`.
 2. Hard-policy violations flagged separately (capacity over-commitment, specific TCV quoting, discounting).
+3. Synthesis candidates additionally use LLM-judge pointwise/pairwise filtering during authoring.
 
 Inter-rater agreement artifact:
 1. Stored in `tenacious_bench_v0.1/inter_rater_agreement.json`.
 2. Human-readable summary in `tenacious_bench_v0.1/inter_rater_agreement.md`.
+3. Current merged-set snapshot: sample size `30`, overall agreement `100.0%`.
 
 ## 5) Uses
 Intended uses:
@@ -93,31 +98,34 @@ Local structure:
 3. `tenacious_bench_v0.1/held_out/tasks.jsonl`
 4. `tenacious_bench_v0.1/contamination_check.json`
 5. `tenacious_bench_v0.1/inter_rater_agreement.json`
+6. `tenacious_bench_v0.1/merge_report.json`
 
 Generation and logs:
 1. `generation_scripts/build_stage2_dataset.py`
-2. `generation_scripts/seed_counts.json`
-3. `generation_scripts/judge_filter_log.jsonl`
-4. `generation_scripts/judge_pairwise_log.jsonl`
-5. `generation_scripts/eval_calibration_log.jsonl`
-6. `generation_scripts/model_routes.md`
-7. `generation_scripts/prompts/*.md`
+2. `generation_scripts/merge_partial_runs.py`
+3. `generation_scripts/seed_counts.json`
+4. `generation_scripts/judge_filter_log.jsonl`
+5. `generation_scripts/judge_pairwise_log.jsonl`
+6. `generation_scripts/eval_calibration_log.jsonl`
+7. `generation_scripts/model_routes.md`
+8. `generation_scripts/prompts/*.md`
 
 ## 7) Maintenance
 Update policy for v0.2:
-1. Replace offline synthesis route with live multi-family LLM generation + separate-family judge.
+1. Keep the merged global-split workflow whenever partial runs are combined, to prevent cross-run split leakage.
 2. Expand thread-leakage and timezone ambiguity slices using additional real traces.
 3. Run true 24-hour relabel agreement protocol with manual adjudication notes.
 4. Keep held-out sealed and rerun contamination checks on every update.
 
 Known limitations in v0.1:
-1. Model-family routing and calibration are implemented in reproducible offline simulation form in this repo (no external API calls committed in this artifact set).
+1. Dataset was generated in two production runs and merged afterward; this is reproducible but adds an extra merge/split step.
 2. Inter-rater check is implemented as two deterministic evaluation passes for Stage 2 reproducibility.
 3. Failure-dimension counts are coverage-targeted and should be expanded with additional manual adversarial depth in v0.2.
+4. Contamination max cosine is reported as `0.85` after rounding in JSON output; internal comparison still satisfied the `< 0.85` pass condition in code.
 
 ## Pushkarna Layered Detail
 1. Telescopic: this benchmark measures Tenacious-specific sales-agent reliability under grounded outreach constraints.
-2. Periscopic: it contains 240 tasks split 50/30/20 with four authoring modes and contamination controls.
+2. Periscopic: it contains 250 tasks split 50/30/20 with four authoring modes, merged-run reconciliation, and contamination controls.
 3. Microscopic: each task stores structured brief fields, request context, candidate output, rubric keys, source mode, difficulty, and lexical trace tag for auditability.
 
 ## License
