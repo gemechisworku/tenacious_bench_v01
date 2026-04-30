@@ -2,7 +2,7 @@
   "checks": {
     "ngram_overlap_8gram_max_shared_count": 0,
     "ngram_overlap_threshold": "< 1 shared 8-gram between train and held_out",
-    "embedding_similarity_max_cosine": 0.85,
+    "embedding_similarity_max_cosine": 0.7612,
     "embedding_similarity_threshold": "< 0.85",
     "time_shift_placeholder_hits": []
   },
@@ -14,9 +14,9 @@
   "samples": {
     "ngram_overlap_pairs_sample": [],
     "max_embedding_pair": {
-      "held_out_task_id": "TBENCH-PRO-00140",
-      "train_task_id": "TBENCH-HAN-00180",
-      "cosine_similarity": 0.85
+      "held_out_task_id": "TBENCH-MUL-00087",
+      "train_task_id": "TBENCH-MUL-00039",
+      "cosine_similarity": 0.7612
     }
   },
   "pass": true

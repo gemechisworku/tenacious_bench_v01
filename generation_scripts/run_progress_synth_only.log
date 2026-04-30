@@ -1,0 +1,156 @@
+2026-04-30T07:08:44.474438+00:00 run_start
+2026-04-30T07:08:44.476129+00:00 mode_start mode=trace_derived target=0 batch_size=10 min_score=4
+2026-04-30T07:08:44.476348+00:00 mode_end mode=trace_derived attempted=0 accepted=0
+2026-04-30T07:08:44.476513+00:00 mode_start mode=programmatic target=0 batch_size=10 min_score=4
+2026-04-30T07:08:44.476683+00:00 mode_end mode=programmatic attempted=0 accepted=0
+2026-04-30T07:08:44.476819+00:00 mode_start mode=multi_llm_synthesis target=62 batch_size=10 min_score=4
+2026-04-30T07:08:44.477793+00:00 api_call_start model=anthropic/claude-sonnet-4.6 attempt=1
+2026-04-30T07:09:07.143434+00:00 api_call_success model=anthropic/claude-sonnet-4.6 attempt=1
+2026-04-30T07:09:07.145145+00:00 api_call_start model=deepseek/deepseek-chat-v3.1 attempt=1
+2026-04-30T07:10:18.149664+00:00 api_call_success model=deepseek/deepseek-chat-v3.1 attempt=1
+2026-04-30T07:10:18.150482+00:00 api_call_start model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:10:32.759939+00:00 api_call_success model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:10:32.760249+00:00 synthesis_reject_both mode=multi_llm_synthesis attempted=10
+2026-04-30T07:10:32.760502+00:00 synthesis_reject_both mode=multi_llm_synthesis attempted=10
+2026-04-30T07:10:32.760696+00:00 synthesis_reject_both mode=multi_llm_synthesis attempted=10
+2026-04-30T07:10:32.760837+00:00 synthesis_reject_both mode=multi_llm_synthesis attempted=10
+2026-04-30T07:10:32.761060+00:00 api_call_start model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:10:36.105536+00:00 api_call_success model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:10:36.106160+00:00 task_accept task_id=TBENCH-MUL-00003 mode=multi_llm_synthesis accepted=1
+2026-04-30T07:10:36.106726+00:00 task_accept task_id=TBENCH-MUL-00007 mode=multi_llm_synthesis accepted=2
+2026-04-30T07:10:36.107413+00:00 task_accept task_id=TBENCH-MUL-00013 mode=multi_llm_synthesis accepted=3
+2026-04-30T07:10:36.108045+00:00 task_accept task_id=TBENCH-MUL-00017 mode=multi_llm_synthesis accepted=4
+2026-04-30T07:10:36.113484+00:00 api_call_start model=anthropic/claude-sonnet-4.6 attempt=1
+2026-04-30T07:10:58.310433+00:00 api_call_success model=anthropic/claude-sonnet-4.6 attempt=1
+2026-04-30T07:10:58.311272+00:00 api_call_start model=deepseek/deepseek-chat-v3.1 attempt=1
+2026-04-30T07:12:15.383965+00:00 api_call_success model=deepseek/deepseek-chat-v3.1 attempt=1
+2026-04-30T07:12:15.384684+00:00 api_call_start model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:12:27.728121+00:00 api_call_success model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:12:27.729065+00:00 synthesis_reject_both mode=multi_llm_synthesis attempted=20
+2026-04-30T07:12:27.729546+00:00 synthesis_reject_both mode=multi_llm_synthesis attempted=20
+2026-04-30T07:12:27.730733+00:00 api_call_start model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:12:35.053777+00:00 api_call_success model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:12:35.054502+00:00 task_accept task_id=TBENCH-MUL-00021 mode=multi_llm_synthesis accepted=5
+2026-04-30T07:12:35.054985+00:00 task_accept task_id=TBENCH-MUL-00023 mode=multi_llm_synthesis accepted=6
+2026-04-30T07:12:35.055394+00:00 task_accept task_id=TBENCH-MUL-00027 mode=multi_llm_synthesis accepted=7
+2026-04-30T07:12:35.055994+00:00 task_accept task_id=TBENCH-MUL-00029 mode=multi_llm_synthesis accepted=8
+2026-04-30T07:12:35.056413+00:00 task_accept task_id=TBENCH-MUL-00031 mode=multi_llm_synthesis accepted=9
+2026-04-30T07:12:35.056831+00:00 task_accept task_id=TBENCH-MUL-00033 mode=multi_llm_synthesis accepted=10
+2026-04-30T07:12:35.057288+00:00 task_accept task_id=TBENCH-MUL-00037 mode=multi_llm_synthesis accepted=11
+2026-04-30T07:12:35.057627+00:00 task_accept task_id=TBENCH-MUL-00039 mode=multi_llm_synthesis accepted=12
+2026-04-30T07:12:35.060458+00:00 api_call_start model=anthropic/claude-sonnet-4.6 attempt=1
+2026-04-30T07:12:58.237426+00:00 api_call_success model=anthropic/claude-sonnet-4.6 attempt=1
+2026-04-30T07:12:58.238296+00:00 api_call_start model=deepseek/deepseek-chat-v3.1 attempt=1
+2026-04-30T07:13:04.469406+00:00 api_call_success model=deepseek/deepseek-chat-v3.1 attempt=1
+2026-04-30T07:13:04.471343+00:00 api_call_start model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:13:17.327789+00:00 api_call_success model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:13:17.328402+00:00 api_call_start model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:13:22.680201+00:00 api_call_success model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:13:22.680709+00:00 task_accept task_id=TBENCH-MUL-00041 mode=multi_llm_synthesis accepted=13
+2026-04-30T07:13:22.681062+00:00 task_accept task_id=TBENCH-MUL-00043 mode=multi_llm_synthesis accepted=14
+2026-04-30T07:13:22.681383+00:00 task_accept task_id=TBENCH-MUL-00045 mode=multi_llm_synthesis accepted=15
+2026-04-30T07:13:22.681651+00:00 task_accept task_id=TBENCH-MUL-00047 mode=multi_llm_synthesis accepted=16
+2026-04-30T07:13:22.682017+00:00 task_accept task_id=TBENCH-MUL-00049 mode=multi_llm_synthesis accepted=17
+2026-04-30T07:13:22.682328+00:00 task_accept task_id=TBENCH-MUL-00051 mode=multi_llm_synthesis accepted=18
+2026-04-30T07:13:22.682558+00:00 task_accept task_id=TBENCH-MUL-00053 mode=multi_llm_synthesis accepted=19
+2026-04-30T07:13:22.682931+00:00 task_accept task_id=TBENCH-MUL-00055 mode=multi_llm_synthesis accepted=20
+2026-04-30T07:13:22.683205+00:00 task_accept task_id=TBENCH-MUL-00057 mode=multi_llm_synthesis accepted=21
+2026-04-30T07:13:22.683459+00:00 task_accept task_id=TBENCH-MUL-00059 mode=multi_llm_synthesis accepted=22
+2026-04-30T07:13:22.684913+00:00 api_call_start model=anthropic/claude-sonnet-4.6 attempt=1
+2026-04-30T07:13:42.710691+00:00 api_call_success model=anthropic/claude-sonnet-4.6 attempt=1
+2026-04-30T07:13:42.711176+00:00 api_call_start model=deepseek/deepseek-chat-v3.1 attempt=1
+2026-04-30T07:14:17.189201+00:00 api_call_success model=deepseek/deepseek-chat-v3.1 attempt=1
+2026-04-30T07:14:17.190990+00:00 api_call_start model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:14:29.888938+00:00 api_call_success model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:14:29.889766+00:00 api_call_start model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:14:35.507660+00:00 api_call_success model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:14:35.508370+00:00 task_accept task_id=TBENCH-MUL-00061 mode=multi_llm_synthesis accepted=23
+2026-04-30T07:14:35.508925+00:00 task_accept task_id=TBENCH-MUL-00063 mode=multi_llm_synthesis accepted=24
+2026-04-30T07:14:35.509601+00:00 task_accept task_id=TBENCH-MUL-00065 mode=multi_llm_synthesis accepted=25
+2026-04-30T07:14:35.510416+00:00 task_accept task_id=TBENCH-MUL-00067 mode=multi_llm_synthesis accepted=26
+2026-04-30T07:14:35.510864+00:00 task_accept task_id=TBENCH-MUL-00069 mode=multi_llm_synthesis accepted=27
+2026-04-30T07:14:35.511335+00:00 task_accept task_id=TBENCH-MUL-00071 mode=multi_llm_synthesis accepted=28
+2026-04-30T07:14:35.511748+00:00 task_accept task_id=TBENCH-MUL-00073 mode=multi_llm_synthesis accepted=29
+2026-04-30T07:14:35.512175+00:00 task_accept task_id=TBENCH-MUL-00075 mode=multi_llm_synthesis accepted=30
+2026-04-30T07:14:35.512479+00:00 task_accept task_id=TBENCH-MUL-00077 mode=multi_llm_synthesis accepted=31
+2026-04-30T07:14:35.512728+00:00 task_accept task_id=TBENCH-MUL-00079 mode=multi_llm_synthesis accepted=32
+2026-04-30T07:14:35.514872+00:00 api_call_start model=anthropic/claude-sonnet-4.6 attempt=1
+2026-04-30T07:14:58.053157+00:00 api_call_success model=anthropic/claude-sonnet-4.6 attempt=1
+2026-04-30T07:14:58.053552+00:00 api_call_start model=deepseek/deepseek-chat-v3.1 attempt=1
+2026-04-30T07:16:05.474216+00:00 api_call_success model=deepseek/deepseek-chat-v3.1 attempt=1
+2026-04-30T07:16:05.474897+00:00 api_call_start model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:16:17.907110+00:00 api_call_success model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:16:17.908529+00:00 api_call_start model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:16:23.038699+00:00 api_call_success model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:16:23.039326+00:00 task_accept task_id=TBENCH-MUL-00081 mode=multi_llm_synthesis accepted=33
+2026-04-30T07:16:23.039508+00:00 task_accept task_id=TBENCH-MUL-00083 mode=multi_llm_synthesis accepted=34
+2026-04-30T07:16:23.039655+00:00 task_accept task_id=TBENCH-MUL-00085 mode=multi_llm_synthesis accepted=35
+2026-04-30T07:16:23.039862+00:00 task_accept task_id=TBENCH-MUL-00087 mode=multi_llm_synthesis accepted=36
+2026-04-30T07:16:23.040034+00:00 task_accept task_id=TBENCH-MUL-00089 mode=multi_llm_synthesis accepted=37
+2026-04-30T07:16:23.040223+00:00 task_accept task_id=TBENCH-MUL-00091 mode=multi_llm_synthesis accepted=38
+2026-04-30T07:16:23.040390+00:00 task_accept task_id=TBENCH-MUL-00093 mode=multi_llm_synthesis accepted=39
+2026-04-30T07:16:23.040643+00:00 task_accept task_id=TBENCH-MUL-00095 mode=multi_llm_synthesis accepted=40
+2026-04-30T07:16:23.040855+00:00 task_accept task_id=TBENCH-MUL-00097 mode=multi_llm_synthesis accepted=41
+2026-04-30T07:16:23.041078+00:00 task_accept task_id=TBENCH-MUL-00099 mode=multi_llm_synthesis accepted=42
+2026-04-30T07:16:23.042547+00:00 api_call_start model=anthropic/claude-sonnet-4.6 attempt=1
+2026-04-30T07:16:49.536411+00:00 api_call_success model=anthropic/claude-sonnet-4.6 attempt=1
+2026-04-30T07:16:49.536787+00:00 api_call_start model=deepseek/deepseek-chat-v3.1 attempt=1
+2026-04-30T07:17:56.553372+00:00 api_call_success model=deepseek/deepseek-chat-v3.1 attempt=1
+2026-04-30T07:17:56.554609+00:00 api_call_start model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:18:10.565941+00:00 api_call_success model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:18:10.566926+00:00 synthesis_reject_both mode=multi_llm_synthesis attempted=60
+2026-04-30T07:18:10.567495+00:00 synthesis_reject_both mode=multi_llm_synthesis attempted=60
+2026-04-30T07:18:10.568224+00:00 api_call_start model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:18:15.318760+00:00 api_call_success model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:18:15.319374+00:00 task_accept task_id=TBENCH-MUL-00102 mode=multi_llm_synthesis accepted=43
+2026-04-30T07:18:15.319968+00:00 task_accept task_id=TBENCH-MUL-00104 mode=multi_llm_synthesis accepted=44
+2026-04-30T07:18:15.320671+00:00 task_accept task_id=TBENCH-MUL-00107 mode=multi_llm_synthesis accepted=45
+2026-04-30T07:18:15.321136+00:00 task_accept task_id=TBENCH-MUL-00109 mode=multi_llm_synthesis accepted=46
+2026-04-30T07:18:15.321715+00:00 task_accept task_id=TBENCH-MUL-00112 mode=multi_llm_synthesis accepted=47
+2026-04-30T07:18:15.322172+00:00 task_accept task_id=TBENCH-MUL-00113 mode=multi_llm_synthesis accepted=48
+2026-04-30T07:18:15.322337+00:00 task_accept task_id=TBENCH-MUL-00117 mode=multi_llm_synthesis accepted=49
+2026-04-30T07:18:15.322499+00:00 task_accept task_id=TBENCH-MUL-00119 mode=multi_llm_synthesis accepted=50
+2026-04-30T07:18:15.323878+00:00 api_call_start model=anthropic/claude-sonnet-4.6 attempt=1
+2026-04-30T07:18:39.266711+00:00 api_call_success model=anthropic/claude-sonnet-4.6 attempt=1
+2026-04-30T07:18:39.267788+00:00 api_call_start model=deepseek/deepseek-chat-v3.1 attempt=1
+2026-04-30T07:19:26.750279+00:00 api_call_success model=deepseek/deepseek-chat-v3.1 attempt=1
+2026-04-30T07:19:26.752577+00:00 api_call_start model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:19:37.378282+00:00 api_call_success model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:19:37.379504+00:00 api_call_start model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:19:43.441991+00:00 api_call_success model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:19:43.442291+00:00 task_accept task_id=TBENCH-MUL-00121 mode=multi_llm_synthesis accepted=51
+2026-04-30T07:19:43.442477+00:00 task_accept task_id=TBENCH-MUL-00123 mode=multi_llm_synthesis accepted=52
+2026-04-30T07:19:43.442719+00:00 task_accept task_id=TBENCH-MUL-00125 mode=multi_llm_synthesis accepted=53
+2026-04-30T07:19:43.442923+00:00 task_accept task_id=TBENCH-MUL-00127 mode=multi_llm_synthesis accepted=54
+2026-04-30T07:19:43.443170+00:00 task_accept task_id=TBENCH-MUL-00129 mode=multi_llm_synthesis accepted=55
+2026-04-30T07:19:43.443359+00:00 task_accept task_id=TBENCH-MUL-00131 mode=multi_llm_synthesis accepted=56
+2026-04-30T07:19:43.443525+00:00 task_accept task_id=TBENCH-MUL-00133 mode=multi_llm_synthesis accepted=57
+2026-04-30T07:19:43.443700+00:00 task_accept task_id=TBENCH-MUL-00135 mode=multi_llm_synthesis accepted=58
+2026-04-30T07:19:43.443849+00:00 task_accept task_id=TBENCH-MUL-00137 mode=multi_llm_synthesis accepted=59
+2026-04-30T07:19:43.444050+00:00 task_accept task_id=TBENCH-MUL-00139 mode=multi_llm_synthesis accepted=60
+2026-04-30T07:19:43.445311+00:00 api_call_start model=anthropic/claude-sonnet-4.6 attempt=1
+2026-04-30T07:20:05.606654+00:00 api_call_success model=anthropic/claude-sonnet-4.6 attempt=1
+2026-04-30T07:20:05.607080+00:00 api_call_start model=deepseek/deepseek-chat-v3.1 attempt=1
+2026-04-30T07:21:25.911639+00:00 api_call_success model=deepseek/deepseek-chat-v3.1 attempt=1
+2026-04-30T07:21:25.913017+00:00 api_call_start model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:21:36.363030+00:00 api_call_success model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:21:36.364333+00:00 api_call_start model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:21:42.788464+00:00 api_call_success model=mistralai/mistral-small-2603 attempt=1
+2026-04-30T07:21:42.789203+00:00 task_accept task_id=TBENCH-MUL-00141 mode=multi_llm_synthesis accepted=61
+2026-04-30T07:21:42.789672+00:00 task_accept task_id=TBENCH-MUL-00143 mode=multi_llm_synthesis accepted=62
+2026-04-30T07:21:42.790247+00:00 mode_end mode=multi_llm_synthesis attempted=80 accepted=62
+2026-04-30T07:21:42.790376+00:00 mode_start mode=hand_authored_adversarial target=0 batch_size=10 min_score=3
+2026-04-30T07:21:42.790542+00:00 mode_end mode=hand_authored_adversarial attempted=0 accepted=0
+2026-04-30T07:21:42.790937+00:00 eval_calibration_start sample_size=50 batch_size=10
+2026-04-30T07:21:42.791406+00:00 api_call_start model=openai/gpt-5-mini attempt=1
+2026-04-30T07:22:22.214948+00:00 api_call_success model=openai/gpt-5-mini attempt=1
+2026-04-30T07:22:22.216044+00:00 api_call_start model=openai/gpt-5-mini attempt=1
+2026-04-30T07:22:57.386515+00:00 api_call_success model=openai/gpt-5-mini attempt=1
+2026-04-30T07:22:57.387942+00:00 api_call_start model=openai/gpt-5-mini attempt=1
+2026-04-30T07:23:43.295646+00:00 api_call_success model=openai/gpt-5-mini attempt=1
+2026-04-30T07:23:43.296177+00:00 api_call_start model=openai/gpt-5-mini attempt=1
+2026-04-30T07:24:31.633750+00:00 api_call_success model=openai/gpt-5-mini attempt=1
+2026-04-30T07:24:31.635214+00:00 api_call_start model=openai/gpt-5-mini attempt=1
+2026-04-30T07:25:08.317354+00:00 api_call_success model=openai/gpt-5-mini attempt=1
+2026-04-30T07:25:08.317687+00:00 eval_calibration_end rows=50
+2026-04-30T07:25:08.352408+00:00 run_end
