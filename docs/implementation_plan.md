@@ -127,16 +127,16 @@ Options:
 1. `DPO` (Rafailov et al., 2023): foundational, strong baseline, but typically uses reference-policy terms.
 2. `SimPO` (Meng et al., 2024): reference-free objective using average log-prob reward + margin; lower memory/compute overhead.
 
-Recommendation:
-1. **SimPO (Recommended)** for this repo.
+Current execution decision (as of 2026-05-01):
+1. **DPO (Executed first)** as the primary Stage 3 run.
 
 Reasoning:
-1. We are compute/cost constrained and already managing many data-quality steps; SimPO removes reference-model overhead.
-2. Preference datasets here are moderate scale; SimPO's simpler objective and margin control are pragmatic for fast iteration.
-3. DPO is still useful as ablation baseline (Delta-B-style method comparison), but not first choice run.
+1. Dataset size for preference tuning is small-to-moderate (`125` train pairs, `75` dev pairs), where DPO is typically stable and straightforward to tune.
+2. The first successful LoRA run has already been completed with DPO and converged.
+3. SimPO remains optional as a follow-up ablation if time permits.
 
 Note on ORPO:
-1. ORPO (Hong et al., 2024) is a valid fallback if SimPO setup friction appears, but primary plan remains SimPO.
+1. ORPO (Hong et al., 2024) remains a valid fallback if DPO/SimPO regression behavior appears.
 
 ### Phase 3.1 - Freeze Inputs and Leakage Controls
 1. Freeze merged dataset snapshot (`tenacious_bench_v0.1/`) and record hash/timestamp.
@@ -162,7 +162,7 @@ Note on ORPO:
    - `training_data/path_b/preferences_dev.jsonl`
    - schema: `{task_id, prompt, chosen, rejected, failure_family, source_mode, generator_family, judge_family}`
 
-### Phase 3.3 - SimPO LoRA Training Runbook
+### Phase 3.3 - DPO LoRA Training Runbook (Executed)
 1. Backbone:
    - default: `Qwen2.5-3B-Instruct` (or equivalent open 2B-4B model that fits T4 safely).
 2. LoRA config:
@@ -172,17 +172,17 @@ Note on ORPO:
    - optimizer `adamw_8bit`,
    - lr `1e-5` to `2e-5`,
    - epochs `1-2`,
-   - effective batch size `32` via grad accumulation,
+   - effective batch size `8` to `32` via gradient accumulation,
    - max length `1024` (or task-fit cap),
    - fixed seed `42`.
 4. Loss/monitoring:
-   - SimPO objective with margin term,
-   - monitor train loss + dev pairwise accuracy.
+   - DPO objective (`beta` tuned via optional mini sweep),
+   - monitor train loss + validation loss.
 5. Output artifacts:
    - LoRA adapter only (no full merged model by default),
-   - `training/training_run.log`,
-   - `training/config.yaml`,
-   - `training/metrics.json`.
+   - notebook run outputs + `training/config.yaml`,
+   - `training/metrics.json`,
+   - `training/training_run.log` (or equivalent exported run log).
 
 ### Phase 3.4 - Stage 3 Verification Gates
 1. Data gate:
@@ -193,29 +193,33 @@ Note on ORPO:
 3. Quality gate:
    - chosen/rejected inversion spot-check sample (>=50 pairs) with manual audit notes.
 
-### Stage 3 Deliverables (Submission Shape)
+### Stage 3 Deliverables (Submission Shape + Status)
+Completed:
 1. `training_data/path_b/preferences_train.jsonl`
 2. `training_data/path_b/preferences_dev.jsonl`
-3. `methodology_rationale.md`:
-   - explicit Path B declaration,
-   - at least 3 Week 10 trace IDs,
-   - at least 2 cited papers,
-   - contamination protocol statement for Stage 3.
-4. `training/`:
-   - run script/notebook,
-   - config,
-   - logs,
-   - seed declaration.
-5. Updated `README.md` section: "How to train Path B critic (SimPO + LoRA)".
+3. `training_data/path_b/preferences_train_dpo.jsonl`
+4. `training_data/path_b/preferences_dev_dpo.jsonl`
+5. `training_data/path_b/build_manifest.json`
+6. `generation_scripts/build_path_b_preferences.py`
+7. `notebooks/DPO_training_unsloth.ipynb` (plus synced copy `notebooks/SimPO_training_unsloth.ipynb`, currently DPO-based)
+8. `methodology_rationale.md`
+9. Updated `README.md` section: "How to train Path B critic (DPO + LoRA)".
+
+Pending to finalize Stage 3 package in-repo:
+1. Sync `training/` artifacts from Colab run:
+   - `training/config.yaml`,
+   - `training/metrics.json`,
+   - `training/training_run.log` (or exported equivalent),
+   - adapter directory (e.g., `training/tenacious_path_b_dpo_lora/`).
 
 ## Stage 3 Decision Checkpoint (Need Your Confirmation)
 ### Decision 4: Path B Method
 Options:
-1. SimPO (Recommended): reference-free, lower-cost training path.
-2. DPO: stronger canonical baseline, slightly heavier setup.
+1. DPO (Selected): stronger canonical baseline, stable on small-to-medium preference sets.
+2. SimPO: optional follow-up ablation if time permits.
 
 Recommendation:
-1. **SimPO first run + DPO mini-ablation** only if time permits.
+1. **DPO first run (completed) + optional SimPO ablation** only if timeline allows.
 
 ### Decision 5: Backbone Size
 Options:
@@ -228,27 +232,42 @@ Recommendation:
 
 ## ACT IV - Train, Ablate, Measure (Stage 4)
 
-### Phase 4.1: Core Training Run
-1. Execute one LoRA run on selected backbone.
-2. Capture hyperparameters, seed, loss curves, runtime.
-3. Stop early and debug data if non-convergent behavior appears.
+Challenge-aligned schedule:
+1. Day 5 morning: run one core LoRA training job and inspect convergence by 30 minutes.
+2. Day 5 afternoon + Day 6: run ablations and sealed held-out evaluation passes.
 
-### Phase 4.2: Required Ablations
-1. Delta A: trained component vs Week 10 baseline on held-out.
-2. Delta B: trained component vs prompt-only variant.
-3. Delta C: compare to existing Week 10 retail benchmark score (if available, no re-run).
-4. Cost/latency comparison with and without trained component.
+### Phase 4.1: Core Training Run (Day 5 Morning)
+Status:
+1. Core DPO + LoRA run completed in Colab with convergent train/validation losses.
 
-### Phase 4.3: Statistical Validation
+Acceptance criteria:
+1. Wall time target `30-90` minutes.
+2. If non-convergent by ~30 minutes, stop and debug data (do not scale compute blindly).
+3. Capture hyperparameters, seed, loss curves, and runtime.
+
+### Phase 4.2: Required Ablations (Day 5 Afternoon + Day 6)
+1. Delta A: trained model vs Week 10 baseline on Tenacious-Bench held-out.
+2. Delta B: trained model vs prompt-engineered intervention on same backbone (no training).
+3. Delta C: trained model vs existing Week 10 `tau^2-Bench retail held-out` score (informational only; reuse existing number, no re-run).
+4. Cost-Pareto: per-task cost + latency with trained component vs without.
+
+Current status:
+1. Delta A: pending.
+2. Delta B: pending.
+3. Delta C: pending (depends on existing Week 10 retail score availability).
+4. Cost-Pareto: pending.
+
+### Phase 4.3: Statistical Validation and Reporting
 1. Use paired bootstrap for confidence intervals.
-2. Record significance targets (p < 0.05 where applicable).
-3. Store raw traces mapped to aggregate claims.
+2. Require `95% CI` separation and `p < 0.05` for Delta A significance claim.
+3. Write sealed-slice aggregate results to `ablation_results.json`.
+4. Write raw scoring traces to `held_out_traces.jsonl`.
 
-Deliverables:
+ACT IV Deliverables:
 1. `ablation_results.json`
 2. `held_out_traces.jsonl`
-3. `training_run.log`
-4. `model_card.md` (if Path A or C)
+3. `training/training_run.log` (with hyperparameters + loss curves, or equivalent exported run log)
+4. `model_card.md` only if Path A or C (not required for Path B)
 
 ## ACT V - Publish and Engage (Stage 5)
 

@@ -106,6 +106,91 @@ Run evaluator on schema examples:
 python scoring_evaluator.py --tasks schema.json --out stage1_eval_results.json
 ```
 
+## Train Path B Critic (DPO + LoRA)
+Prebuild preference files:
+```powershell
+python generation_scripts/build_path_b_preferences.py --project-root .
+```
+
+Generated training inputs:
+1. `training_data/path_b/preferences_train_dpo.jsonl`
+2. `training_data/path_b/preferences_dev_dpo.jsonl`
+
+Notebook runbook:
+1. `notebooks/DPO_training_unsloth.ipynb`
+2. Colab-first flow with optional mini-sweep (`beta`/`epochs`) and artifact export to `training/`.
+
+## ACT IV Ablations (Delta A/B/C + Cost-Pareto)
+Generate held-out outputs per variant, then run ablation evaluation.
+
+Colab notebook option (recommended if local machine lacks GPU/deps):
+1. `notebooks/ACT4_ablation_unsloth.ipynb`
+2. The notebook runs real trained inference from `training/tenacious_path_b_dpo_lora` and then runs smoke/full ACT IV ablations.
+
+Expected JSONL output row format for each variant file:
+```json
+{"task_id":"TBENCH-...","subject":"...","body":"..."}
+```
+
+### 1) Export baseline and prompt-only outputs (fast, local)
+```powershell
+python generation_scripts/export_heldout_outputs.py `
+  --mode baseline `
+  --held-out tenacious_bench_v0.1/held_out/tasks.jsonl `
+  --out training/heldout_baseline_outputs.jsonl
+
+python generation_scripts/export_heldout_outputs.py `
+  --mode prompt_only `
+  --held-out tenacious_bench_v0.1/held_out/tasks.jsonl `
+  --out training/heldout_prompt_outputs.jsonl
+```
+
+### 2) Export trained-model outputs (run on Colab GPU)
+```powershell
+python generation_scripts/export_heldout_outputs.py `
+  --mode trained `
+  --held-out tenacious_bench_v0.1/held_out/tasks.jsonl `
+  --adapter-path training/tenacious_path_b_dpo_lora `
+  --base-model unsloth/Qwen2.5-3B-Instruct-bnb-4bit `
+  --out training/heldout_trained_outputs.jsonl
+```
+
+### 3) Smoke test the full ablation pipeline (recommended)
+```powershell
+python generation_scripts/run_act4_ablations.py `
+  --held-out tenacious_bench_v0.1/held_out/tasks.jsonl `
+  --baseline-outputs-file training/heldout_baseline_outputs.jsonl `
+  --prompt-outputs-file training/heldout_prompt_outputs.jsonl `
+  --trained-outputs-file training/heldout_trained_outputs.jsonl `
+  --limit 10 `
+  --bootstrap-iters 500 `
+  --out-ablation training/ablation_results_smoke.json `
+  --out-traces training/held_out_traces_smoke.jsonl
+```
+
+### 4) Full ACT IV run
+```powershell
+python generation_scripts/run_act4_ablations.py `
+  --held-out tenacious_bench_v0.1/held_out/tasks.jsonl `
+  --baseline-outputs-file training/heldout_baseline_outputs.jsonl `
+  --prompt-outputs-file training/heldout_prompt_outputs.jsonl `
+  --trained-outputs-file training/heldout_trained_outputs.jsonl `
+  --week10-retail-score <your_week10_tau2_score> `
+  --bootstrap-iters 5000 `
+  --out-ablation ablation_results.json `
+  --out-traces held_out_traces.jsonl
+```
+
+Submission naming requirement:
+1. Use `--out-ablation ablation_results.json`
+2. Use `--out-traces held_out_traces.jsonl`
+3. Do not submit `_smoke` filenames as final deliverables.
+
+Notes:
+1. Delta A and Delta B significance are computed with paired bootstrap (`95% CI`, one-sided `p` for positive lift).
+2. Delta C is informational only and uses your existing Week 10 retail score (no re-run).
+3. Cost-Pareto uses per-task cost assumptions; pass `--assume-cost-*` flags if you want non-zero cost modeling.
+
 ## Rough Runtime and Cost Estimates
 Based on a real API-backed 3-task smoke run in this repo:
 1. 3-task smoke run took ~2.2 minutes.
