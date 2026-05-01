@@ -107,24 +107,124 @@ Deliverables:
 
 ## ACT III - Method Selection and Training Data Prep (Stage 3)
 
-### Phase 3.1: Finalize Path and Rationale
-1. Confirm selected path (A/B/C).
-2. Complete path-specific reading memos.
-3. Write one-page method rationale citing Week 10 trace evidence + paper references.
+### Stage 3 Objective
+Train a small preference-tuned **critic/judge component** that improves unsafe/inconsistent-output detection before send.
 
-### Phase 3.2: Training Data Conversion
-1. Path A: chat-format instruction pairs, quality filtered.
-2. Path B: chosen/rejected preference pairs with leakage controls.
-3. Path C: step-level trajectory labels for process scoring.
+### Why Path B Fits This Repo Best
+Week 10 evidence indicates **inconsistency and guardrail failures** more than pure phrasing failures:
+1. `trace_respond_874662476a68`: policy-blocked channel action.
+2. `trace_advance_2ef64021c4f8`: invalid state transition.
+3. `trace_schedule_book_2dc2d85ac0fc` and `trace_slots_fail`: scheduling reliability breakdowns.
+4. `trace_mem_get_03bdfa202017` + `trace_outreach_ae9e643c953b`: context/memory coupling failures.
 
-### Phase 3.3: Data Integrity Checks
-1. Re-check contamination boundaries vs held-out/dev.
-2. Validate schema conformance and sampling balance.
+Implication:
+1. Path A (generator SFT) would improve wording but does not directly maximize rejection/rollback quality.
+2. Path C (process reward model) is high-prep and heavier for timeline.
+3. **Path B is best-aligned** to catching "looks fine but should be blocked" outputs at lower training complexity.
 
-Deliverables:
-1. `training_data/`
-2. `methodology_rationale.md`
-3. Updated contamination verification output
+### DPO vs SimPO Decision (for Path B)
+Options:
+1. `DPO` (Rafailov et al., 2023): foundational, strong baseline, but typically uses reference-policy terms.
+2. `SimPO` (Meng et al., 2024): reference-free objective using average log-prob reward + margin; lower memory/compute overhead.
+
+Recommendation:
+1. **SimPO (Recommended)** for this repo.
+
+Reasoning:
+1. We are compute/cost constrained and already managing many data-quality steps; SimPO removes reference-model overhead.
+2. Preference datasets here are moderate scale; SimPO's simpler objective and margin control are pragmatic for fast iteration.
+3. DPO is still useful as ablation baseline (Delta-B-style method comparison), but not first choice run.
+
+Note on ORPO:
+1. ORPO (Hong et al., 2024) is a valid fallback if SimPO setup friction appears, but primary plan remains SimPO.
+
+### Phase 3.1 - Freeze Inputs and Leakage Controls
+1. Freeze merged dataset snapshot (`tenacious_bench_v0.1/`) and record hash/timestamp.
+2. Use only `train/tasks.jsonl` for preference construction.
+3. Keep `dev` for calibration and `held_out` strictly sealed.
+4. Enforce preference-leakage controls (Li et al., 2025):
+   - generator family for rewrites must differ from judge family,
+   - avoid same/inherited-family pairings for chosen/rejected labeling,
+   - log model family metadata per pair.
+
+### Phase 3.2 - Build Preference Pairs (Path B Data)
+1. Define rejected pool:
+   - outputs failing deterministic rubric markers or hard-policy checks.
+2. Define chosen pool:
+   - corrected rewrites from Week 10 hand-fixes first,
+   - then dev-tier rewrite only when hand-fix unavailable,
+   - chosen outputs must pass evaluator thresholds.
+3. Pairing strategy:
+   - same task input, two outputs (`chosen`, `rejected`),
+   - preserve failure tag (`SIG/BEN/TON/MTL/SCH`) for stratified sampling.
+4. Save as:
+   - `training_data/path_b/preferences_train.jsonl`
+   - `training_data/path_b/preferences_dev.jsonl`
+   - schema: `{task_id, prompt, chosen, rejected, failure_family, source_mode, generator_family, judge_family}`
+
+### Phase 3.3 - SimPO LoRA Training Runbook
+1. Backbone:
+   - default: `Qwen2.5-3B-Instruct` (or equivalent open 2B-4B model that fits T4 safely).
+2. LoRA config:
+   - `r=16`, `alpha=32`, `dropout=0.05`,
+   - target modules: attention + MLP projections (`q_proj,k_proj,v_proj,o_proj,up_proj,down_proj,gate_proj`).
+3. Training config (initial):
+   - optimizer `adamw_8bit`,
+   - lr `1e-5` to `2e-5`,
+   - epochs `1-2`,
+   - effective batch size `32` via grad accumulation,
+   - max length `1024` (or task-fit cap),
+   - fixed seed `42`.
+4. Loss/monitoring:
+   - SimPO objective with margin term,
+   - monitor train loss + dev pairwise accuracy.
+5. Output artifacts:
+   - LoRA adapter only (no full merged model by default),
+   - `training/training_run.log`,
+   - `training/config.yaml`,
+   - `training/metrics.json`.
+
+### Phase 3.4 - Stage 3 Verification Gates
+1. Data gate:
+   - no held-out task IDs in `training_data/path_b/*`,
+   - schema validation passes for all preference rows.
+2. Leakage gate:
+   - zero same-family generator/judge cases in preference construction logs.
+3. Quality gate:
+   - chosen/rejected inversion spot-check sample (>=50 pairs) with manual audit notes.
+
+### Stage 3 Deliverables (Submission Shape)
+1. `training_data/path_b/preferences_train.jsonl`
+2. `training_data/path_b/preferences_dev.jsonl`
+3. `methodology_rationale.md`:
+   - explicit Path B declaration,
+   - at least 3 Week 10 trace IDs,
+   - at least 2 cited papers,
+   - contamination protocol statement for Stage 3.
+4. `training/`:
+   - run script/notebook,
+   - config,
+   - logs,
+   - seed declaration.
+5. Updated `README.md` section: "How to train Path B critic (SimPO + LoRA)".
+
+## Stage 3 Decision Checkpoint (Need Your Confirmation)
+### Decision 4: Path B Method
+Options:
+1. SimPO (Recommended): reference-free, lower-cost training path.
+2. DPO: stronger canonical baseline, slightly heavier setup.
+
+Recommendation:
+1. **SimPO first run + DPO mini-ablation** only if time permits.
+
+### Decision 5: Backbone Size
+Options:
+1. 2B class (fastest, cheapest, lower ceiling).
+2. 3B-4B class (Recommended: best balance on Colab/RunPod budget).
+3. 7B class (higher ceiling, riskier runtime/cost).
+
+Recommendation:
+1. **3B-4B class** for first successful Stage 3 completion.
 
 ## ACT IV - Train, Ablate, Measure (Stage 4)
 
@@ -200,3 +300,10 @@ Mitigation: automated contamination checks on every partition update.
 Mitigation: publish honest negative result; treat as method finding, not failure to report.
 5. Risk: Time overrun near publication.
 Mitigation: prioritize reproducibility and required artifacts over optional polish.
+
+## Sources Used for Stage 3 Method Choice
+1. Direct Preference Optimization (Rafailov et al., 2023): https://arxiv.org/abs/2305.18290
+2. SimPO (Meng et al., 2024, NeurIPS): https://arxiv.org/abs/2405.14734
+3. ORPO (Hong et al., 2024): https://arxiv.org/abs/2403.07691
+4. Prometheus 2 (Kim et al., 2024): https://arxiv.org/abs/2405.01535
+5. Preference Leakage (Li et al., 2025/2026 version): https://arxiv.org/abs/2502.01534

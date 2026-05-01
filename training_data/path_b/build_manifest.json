@@ -1,0 +1,47 @@
+{
+  "project_root": "D:\\FDE-Training\\week-11\\tenacious_bench_v0.1",
+  "seed": 42,
+  "inputs": {
+    "train_tasks": "D:\\FDE-Training\\week-11\\tenacious_bench_v0.1\\tenacious_bench_v0.1\\train\\tasks.jsonl",
+    "dev_tasks": "D:\\FDE-Training\\week-11\\tenacious_bench_v0.1\\tenacious_bench_v0.1\\dev\\tasks.jsonl",
+    "evaluator": "D:\\FDE-Training\\week-11\\tenacious_bench_v0.1\\scoring_evaluator.py"
+  },
+  "outputs": {
+    "preferences_train": "D:\\FDE-Training\\week-11\\tenacious_bench_v0.1\\training_data\\path_b\\preferences_train.jsonl",
+    "preferences_dev": "D:\\FDE-Training\\week-11\\tenacious_bench_v0.1\\training_data\\path_b\\preferences_dev.jsonl",
+    "preferences_train_dpo": "D:\\FDE-Training\\week-11\\tenacious_bench_v0.1\\training_data\\path_b\\preferences_train_dpo.jsonl",
+    "preferences_dev_dpo": "D:\\FDE-Training\\week-11\\tenacious_bench_v0.1\\training_data\\path_b\\preferences_dev_dpo.jsonl"
+  },
+  "train_summary": {
+    "rows": 125,
+    "failure_family_counts": {
+      "MTL": 97,
+      "BEN": 18,
+      "TON": 8,
+      "SIG": 2
+    },
+    "source_mode_counts": {
+      "trace_derived": 30,
+      "hand_authored_adversarial": 18,
+      "programmatic": 46,
+      "multi_llm_synthesis": 31
+    },
+    "strict_preference_violations": 0
+  },
+  "dev_summary": {
+    "rows": 75,
+    "failure_family_counts": {
+      "MTL": 58,
+      "BEN": 13,
+      "SIG": 2,
+      "TON": 2
+    },
+    "source_mode_counts": {
+      "programmatic": 16,
+      "hand_authored_adversarial": 13,
+      "trace_derived": 27,
+      "multi_llm_synthesis": 19
+    },
+    "strict_preference_violations": 0
+  }
+}
