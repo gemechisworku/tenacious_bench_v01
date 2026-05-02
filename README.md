@@ -148,10 +148,12 @@ python generation_scripts/export_heldout_outputs.py `
 ### 2) Export trained-model outputs (run on Colab GPU)
 ```powershell
 python generation_scripts/export_heldout_outputs.py `
-  --mode trained `
+  --mode trained_intervene `
   --held-out tenacious_bench_v0.1/held_out/tasks.jsonl `
+  --base-outputs-file training/heldout_baseline_outputs.jsonl `
   --adapter-path training/tenacious_path_b_dpo_lora `
-  --base-model unsloth/Qwen2.5-3B-Instruct-bnb-4bit `
+  --base-model auto `
+  --max-new-tokens 140 `
   --out training/heldout_trained_outputs.jsonl
 ```
 
