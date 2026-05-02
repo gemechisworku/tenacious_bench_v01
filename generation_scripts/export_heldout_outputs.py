@@ -13,8 +13,9 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import time
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Callable, Dict, List
 
 SUBJECT_INTENT_PREFIX = "Request:"
 SUBJECT_MAX_LEN = 60
@@ -31,6 +32,16 @@ META_TAIL_MARKERS = (
     "[linkedin",
     "[source url",
 )
+
+
+def make_logger(enabled: bool) -> Callable[[str], None]:
+    def _log(msg: str) -> None:
+        if not enabled:
+            return
+        ts = time.strftime("%H:%M:%S")
+        print(f"[export_heldout_outputs {ts}] {msg}", flush=True)
+
+    return _log
 
 
 def read_jsonl(path: Path) -> List[Dict[str, Any]]:
@@ -297,18 +308,31 @@ def export_trained(
     inference_backend: str = "auto",
     local_files_only: bool = False,
     intervention_base_map: Dict[str, Dict[str, str]] | None = None,
+    log: Callable[[str], None] | None = None,
+    log_every: int = 5,
 ) -> List[Dict[str, Any]]:
+    if log is None:
+        log = lambda _msg: None
+
     resolved_base_model = resolve_base_model(base_model, adapter_path)
+    mode_name = "trained_intervene" if intervention_base_map is not None else "trained"
+    log(
+        f"Preparing {mode_name} inference for {len(tasks)} task(s). "
+        f"backend={inference_backend}, base_model={resolved_base_model}, adapter_path={adapter_path}, "
+        f"max_seq_length={max_seq_length}, max_new_tokens={max_new_tokens}"
+    )
 
     def _export_with_unsloth() -> List[Dict[str, Any]]:
         import os
         import torch
         from unsloth import FastLanguageModel
 
+        log("Trying backend=unsloth")
         if not torch.cuda.is_available():
             raise RuntimeError("Unsloth inference requires CUDA, but CUDA is not available.")
 
         os.environ["UNSLOTH_STABLE_DOWNLOADS"] = "1"
+        t_load = time.perf_counter()
         model, tokenizer = FastLanguageModel.from_pretrained(
             model_name=resolved_base_model,
             max_seq_length=max_seq_length,
@@ -317,8 +341,10 @@ def export_trained(
         )
         model.load_adapter(adapter_path)
         FastLanguageModel.for_inference(model)
+        log(f"Unsloth model loaded in {time.perf_counter() - t_load:.2f}s")
 
         rows: List[Dict[str, Any]] = []
+        t_all = time.perf_counter()
         for t in tasks:
             if intervention_base_map is None:
                 prompt = build_prompt(t)
@@ -341,15 +367,27 @@ def export_trained(
             sb = parse_subject_body(text)
             sb = postprocess_output(t, sb)
             rows.append({"task_id": t.get("task_id", ""), "subject": sb["subject"], "body": sb["body"]})
+            if log_every > 0 and len(rows) % log_every == 0:
+                elapsed = time.perf_counter() - t_all
+                rate = len(rows) / max(elapsed, 1e-9)
+                remaining = (len(tasks) - len(rows)) / max(rate, 1e-9)
+                log(
+                    f"Progress {len(rows)}/{len(tasks)} "
+                    f"({100.0 * len(rows) / max(len(tasks), 1):.1f}%), "
+                    f"elapsed={elapsed:.1f}s, eta={remaining:.1f}s"
+                )
+        log(f"Unsloth inference complete for {len(rows)} task(s) in {time.perf_counter() - t_all:.2f}s")
         return rows
 
     def _export_with_transformers() -> List[Dict[str, Any]]:
         import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer
 
+        log("Trying backend=transformers")
         device = "cuda" if torch.cuda.is_available() else "cpu"
 
         try:
+            t_load = time.perf_counter()
             model = AutoModelForCausalLM.from_pretrained(
                 resolved_base_model,
                 local_files_only=local_files_only,
@@ -363,6 +401,7 @@ def export_trained(
 
         model.to(device)
         model.eval()
+        log(f"Transformers model loaded on {device} in {time.perf_counter() - t_load:.2f}s")
         tokenizer = AutoTokenizer.from_pretrained(
             adapter_path,
             local_files_only=local_files_only,
@@ -371,6 +410,7 @@ def export_trained(
             tokenizer.pad_token = tokenizer.eos_token
 
         rows: List[Dict[str, Any]] = []
+        t_all = time.perf_counter()
         for t in tasks:
             if intervention_base_map is None:
                 prompt = build_prompt(t)
@@ -394,6 +434,16 @@ def export_trained(
             sb = parse_subject_body(text)
             sb = postprocess_output(t, sb)
             rows.append({"task_id": t.get("task_id", ""), "subject": sb["subject"], "body": sb["body"]})
+            if log_every > 0 and len(rows) % log_every == 0:
+                elapsed = time.perf_counter() - t_all
+                rate = len(rows) / max(elapsed, 1e-9)
+                remaining = (len(tasks) - len(rows)) / max(rate, 1e-9)
+                log(
+                    f"Progress {len(rows)}/{len(tasks)} "
+                    f"({100.0 * len(rows) / max(len(tasks), 1):.1f}%), "
+                    f"elapsed={elapsed:.1f}s, eta={remaining:.1f}s"
+                )
+        log(f"Transformers inference complete for {len(rows)} task(s) in {time.perf_counter() - t_all:.2f}s")
         return rows
 
     backend = inference_backend.lower().strip()
@@ -407,9 +457,11 @@ def export_trained(
             return _export_with_unsloth()
         except Exception as e:
             unsloth_error = e
+            log(f"backend=unsloth failed: {repr(e)}")
         try:
             return _export_with_transformers()
         except Exception as e:
+            log(f"backend=transformers failed: {repr(e)}")
             raise RuntimeError(
                 "Could not run trained inference with either backend. "
                 f"unsloth_error={unsloth_error!r}; transformers_error={e!r}"
@@ -445,19 +497,31 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Do not download model files; require all weights/tokenizers locally.",
     )
+    p.add_argument("--verbose", action="store_true", help="Print progress logs.")
+    p.add_argument("--log-every", type=int, default=5, help="Progress log frequency in tasks for trained modes.")
     return p.parse_args()
 
 
 def main() -> None:
+    t0 = time.perf_counter()
     args = parse_args()
+    log = make_logger(args.verbose)
+    log(
+        f"Started mode={args.mode}, held_out={args.held_out}, out={args.out}, "
+        f"limit={args.limit}, backend={args.inference_backend}"
+    )
     tasks = read_jsonl(args.held_out)
+    log(f"Loaded held-out tasks: {len(tasks)}")
     if args.limit and args.limit > 0:
         tasks = tasks[: args.limit]
+        log(f"Applied limit -> {len(tasks)} task(s)")
 
     if args.mode == "baseline":
         rows = export_baseline(tasks)
+        log(f"Baseline export complete for {len(rows)} task(s)")
     elif args.mode == "prompt_only":
         rows = export_prompt_only(tasks)
+        log(f"Prompt-only export complete for {len(rows)} task(s)")
     elif args.mode == "trained":
         rows = export_trained(
             tasks,
@@ -467,15 +531,19 @@ def main() -> None:
             max_new_tokens=args.max_new_tokens,
             inference_backend=args.inference_backend,
             local_files_only=args.local_files_only,
+            log=log,
+            log_every=args.log_every,
         )
     else:
         if args.base_outputs_file is None:
             raise ValueError("--base-outputs-file is required for mode=trained_intervene")
         if not args.base_outputs_file.exists():
             raise ValueError(f"base outputs file not found: {args.base_outputs_file}")
+        log(f"Loading base outputs for intervention: {args.base_outputs_file}")
         base_map = load_outputs_map(args.base_outputs_file)
         if not base_map:
             raise ValueError(f"base outputs file is empty or invalid: {args.base_outputs_file}")
+        log(f"Loaded base outputs: {len(base_map)} task(s)")
         rows = export_trained(
             tasks,
             base_model=args.base_model,
@@ -485,9 +553,13 @@ def main() -> None:
             inference_backend=args.inference_backend,
             local_files_only=args.local_files_only,
             intervention_base_map=base_map,
+            log=log,
+            log_every=args.log_every,
         )
 
     write_jsonl(args.out, rows)
+    log(f"Wrote {len(rows)} row(s) to {args.out}")
+    log(f"Finished in {time.perf_counter() - t0:.2f}s")
     print(json.dumps({"mode": args.mode, "rows": len(rows), "out": str(args.out)}, indent=2))
 
 
