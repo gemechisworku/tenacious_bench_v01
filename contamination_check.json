@@ -1,0 +1,81 @@
+{
+  "coverage": {
+    "pairs_checked": [
+      "held_out_vs_train",
+      "held_out_vs_dev"
+    ],
+    "split_sizes": {
+      "train": 125,
+      "dev": 75,
+      "held_out": 50
+    }
+  },
+  "checks": {
+    "ngram_overlap_8gram_max_shared_count": 3,
+    "ngram_overlap_threshold": "< 1 shared 8-gram between held_out and each reference split",
+    "embedding_similarity_max_cosine": 0.948718,
+    "embedding_similarity_threshold": "< 0.85",
+    "held_out_vs_train": {
+      "ngram_overlap": {
+        "n": 8,
+        "max_shared_count": 0,
+        "threshold": "< 1 shared 8-gram",
+        "flagged_pairs": 0,
+        "sample_pairs": []
+      },
+      "embedding_similarity": {
+        "backend": "hash_fallback",
+        "model_name": "sentence-transformers/all-MiniLM-L6-v2",
+        "max_cosine": 0.853913,
+        "threshold": "< 0.85",
+        "flagged_pairs": 2,
+        "max_pair": {
+          "held_out_task_id": "TBENCH-TRA-00010",
+          "train_task_id": "TBENCH-TRA-00030",
+          "cosine_similarity": 0.853913
+        }
+      },
+      "pass": false
+    },
+    "held_out_vs_dev": {
+      "ngram_overlap": {
+        "n": 8,
+        "max_shared_count": 3,
+        "threshold": "< 1 shared 8-gram",
+        "flagged_pairs": 1,
+        "sample_pairs": [
+          {
+            "held_out_task_id": "TBENCH-PRO-00108",
+            "dev_task_id": "TBENCH-MUL-00027",
+            "shared_8gram_count": 3
+          }
+        ]
+      },
+      "embedding_similarity": {
+        "backend": "hash_fallback",
+        "model_name": "sentence-transformers/all-MiniLM-L6-v2",
+        "max_cosine": 0.948718,
+        "threshold": "< 0.85",
+        "flagged_pairs": 6,
+        "max_pair": {
+          "held_out_task_id": "TBENCH-PRO-00108",
+          "dev_task_id": "TBENCH-MUL-00027",
+          "cosine_similarity": 0.948718
+        }
+      },
+      "pass": false
+    },
+    "time_shift": {
+      "signal_window_days": 730,
+      "issue_count": 0,
+      "issues_sample": [],
+      "pass": true
+    }
+  },
+  "flagged_counts": {
+    "ngram_pairs_flagged": 1,
+    "embedding_pairs_flagged": 8,
+    "time_shift_tasks_flagged": 0
+  },
+  "pass": false
+}

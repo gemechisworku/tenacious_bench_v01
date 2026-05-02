@@ -15,7 +15,7 @@ This file documents the routed authoring + judge policy implemented in `build_st
 - Generator family: `trace_human_source`
 
 2. `programmatic`
-- Source: parameter sweeps across segment, confidence, stack, requested count, and outreach type.
+- Source: parameter sweeps across `company_size`, `segment`, `headcount_request`, `stack`, `bench_state`, and `ai_maturity_score`.
 - Generator path: `parameter_sweep`
 - Generator family: `template_engine`
 
@@ -73,3 +73,4 @@ Policy:
 2. `generation_scripts/judge_pairwise_log.jsonl`
 3. `generation_scripts/eval_calibration_log.jsonl`
 4. `generation_scripts/seed_counts.json`
+5. `tenacious_bench_v0.1/contamination_check.json` (emitted by `generation_scripts/run_contamination_checks.py`)

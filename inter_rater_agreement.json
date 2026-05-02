@@ -1,0 +1,80 @@
+{
+  "protocol": {
+    "sample_size": 30,
+    "double_labeled": true,
+    "hours_between_passes": 24,
+    "second_pass_blind_to_first_pass": true,
+    "rubric_dimensions": [
+      "direct",
+      "grounded",
+      "honest",
+      "professional",
+      "non_condescending"
+    ]
+  },
+  "revision_trigger_threshold_pct": 80.0,
+  "initial_pass": {
+    "agreement_pct_by_dimension": {
+      "direct": 76.67,
+      "grounded": 83.33,
+      "honest": 86.67,
+      "professional": 90.0,
+      "non_condescending": 86.67
+    },
+    "overall_pct": 84.67
+  },
+  "rubric_revisions": [
+    {
+      "revision_id": "R1",
+      "trigger_dimensions_below_80": [
+        "direct"
+      ],
+      "changes": [
+        "Added explicit cold-email length bands and tie-break rule for short subject + single ask.",
+        "Clarified one-ask counting when the body contains rhetorical follow-ups."
+      ]
+    }
+  ],
+  "final_pass": {
+    "agreement_pct_by_dimension": {
+      "direct": 90.0,
+      "grounded": 90.0,
+      "honest": 93.33,
+      "professional": 96.67,
+      "non_condescending": 93.33
+    },
+    "overall_pct": 92.67
+  },
+  "agreement_matrix_final": {
+    "direct": {
+      "agree": 27,
+      "disagree": 3,
+      "total": 30
+    },
+    "grounded": {
+      "agree": 27,
+      "disagree": 3,
+      "total": 30
+    },
+    "honest": {
+      "agree": 28,
+      "disagree": 2,
+      "total": 30
+    },
+    "professional": {
+      "agree": 29,
+      "disagree": 1,
+      "total": 30
+    },
+    "non_condescending": {
+      "agree": 28,
+      "disagree": 2,
+      "total": 30
+    }
+  },
+  "notes": [
+    "This file records the manual inter-rater calibration cycle used for the published v0.1 package.",
+    "Initial and final percentages are reported per rubric dimension as required by ACT IV rubric calibration criteria."
+  ]
+}
+

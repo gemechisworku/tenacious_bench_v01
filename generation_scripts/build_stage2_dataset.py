@@ -14,8 +14,9 @@ Judge pipeline:
 
 Contamination checks:
 1. 8-gram overlap (input fields only)
-2. embedding-proxy cosine similarity
-3. time-shift placeholder/date checks
+2. lexical cosine proxy similarity
+3. time-shift provenance/date checks
+4. coverage for held_out vs train and held_out vs dev
 """
 
 from __future__ import annotations
@@ -71,6 +72,7 @@ COMPANIES = [
 ]
 
 STACKS = ["python", "go", "data", "ml", "infra", "frontend"]
+COMPANY_SIZES = ["startup", "mid_market", "enterprise"]
 SEGMENTS = [
     "segment_1_series_a_b",
     "segment_2_mid_market_restructure",
@@ -442,9 +444,12 @@ def build_task(
     weak = (idx % 5 == 0) or source_mode == "hand_authored_adversarial"
     segment = SEGMENTS[idx % len(SEGMENTS)]
     stack = STACKS[idx % len(STACKS)]
+    company_size = COMPANY_SIZES[idx % len(COMPANY_SIZES)]
     requested_count = 10 if (source_mode == "hand_authored_adversarial" and idx % 2 == 0) else (2 + (idx % 4))
     requested = [{"stack": stack, "count": requested_count}]
     brief = build_hiring_signal_brief(company, idx, weak=weak, segment=segment)
+    available_stack_engineers = int(bench_summary["stacks"][stack]["available_engineers"])
+    bench_state = "tight" if available_stack_engineers < (requested_count * 2) else "healthy"
     lex_tag = f"{source_mode[:3]}-{idx:03d}-{company.split()[0].lower()}"
 
     if forced_output is not None:
@@ -502,6 +507,14 @@ def build_task(
             ]
             if source_mode == "trace_derived"
             else [],
+            "slot_values": {
+                "company_size": company_size,
+                "segment": segment,
+                "headcount_request": requested_count,
+                "stack": stack,
+                "bench_state": bench_state,
+                "ai_maturity_score": brief["ai_maturity"]["score"],
+            },
             "created_at": NOW.isoformat(),
         },
         "input": {
@@ -516,6 +529,11 @@ def build_task(
             "request_context": {
                 "requested_capacity": requested,
                 "pricing_request": "custom_multiphase" if requested_count >= 8 else "public_band",
+                "company_profile": {
+                    "company_size": company_size,
+                    "segment": segment,
+                },
+                "bench_state": bench_state,
             },
             "prior_thread": {
                 "contacted_before": outreach_type != "cold",
@@ -831,11 +849,16 @@ def cosine_sim(text_a: str, text_b: str) -> float:
     return dot / (na * nb)
 
 
-def contamination_report(splits: Dict[str, List[Dict[str, Any]]]) -> Dict[str, Any]:
-    train = splits["train"]
-    held = splits["held_out"]
-    train_texts = [content_text(t) for t in train]
+def _compare_split_pairs(
+    held: List[Dict[str, Any]],
+    ref: List[Dict[str, Any]],
+    ref_name: str,
+    cosine_threshold: float,
+) -> Dict[str, Any]:
     held_texts = [content_text(t) for t in held]
+    ref_texts = [content_text(t) for t in ref]
+    held_ngrams = [ngrams(txt.split(), 8) for txt in held_texts]
+    ref_ngrams = [ngrams(txt.split(), 8) for txt in ref_texts]
 
     max_8gram_overlap = 0
     max_cosine = 0.0
@@ -844,12 +867,9 @@ def contamination_report(splits: Dict[str, List[Dict[str, Any]]]) -> Dict[str, A
     flagged_ngram_pairs = 0
     flagged_cos_pairs = 0
 
-    train_ngrams = [ngrams(txt.split(), 8) for txt in train_texts]
-    held_ngrams = [ngrams(txt.split(), 8) for txt in held_texts]
-
     for hi, htask in enumerate(held):
-        for ti, ttask in enumerate(train):
-            shared = held_ngrams[hi].intersection(train_ngrams[ti])
+        for ri, rtask in enumerate(ref):
+            shared = held_ngrams[hi].intersection(ref_ngrams[ri])
             shared_count = len(shared)
             max_8gram_overlap = max(max_8gram_overlap, shared_count)
             if shared_count >= 1:
@@ -858,49 +878,146 @@ def contamination_report(splits: Dict[str, List[Dict[str, Any]]]) -> Dict[str, A
                     overlap_pairs.append(
                         {
                             "held_out_task_id": htask["task_id"],
-                            "train_task_id": ttask["task_id"],
+                            f"{ref_name}_task_id": rtask["task_id"],
                             "shared_8gram_count": shared_count,
                         }
                     )
 
-            c = cosine_sim(held_texts[hi], train_texts[ti])
-            if c >= 0.85:
+            c = cosine_sim(held_texts[hi], ref_texts[ri])
+            if c >= cosine_threshold:
                 flagged_cos_pairs += 1
             if c > max_cosine:
                 max_cosine = c
                 max_cos_pair = {
                     "held_out_task_id": htask["task_id"],
-                    "train_task_id": ttask["task_id"],
-                    "cosine_similarity": round(c, 4),
+                    f"{ref_name}_task_id": rtask["task_id"],
+                    "cosine_similarity": round(c, 6),
                 }
 
-    placeholder_hits: List[str] = []
-    date_re = re.compile(r"\d{4}-\d{2}-\d{2}")
-    for split in splits.values():
-        for task in split:
+    return {
+        "ngram_overlap_8gram_max_shared_count": max_8gram_overlap,
+        "embedding_similarity_max_cosine": round(max_cosine, 6),
+        "flagged_counts": {
+            "ngram_pairs_flagged": flagged_ngram_pairs,
+            "embedding_pairs_flagged": flagged_cos_pairs,
+        },
+        "samples": {
+            "ngram_overlap_pairs_sample": overlap_pairs,
+            "max_embedding_pair": max_cos_pair,
+        },
+        "pass": bool(max_8gram_overlap < 1 and max_cosine < cosine_threshold),
+    }
+
+
+def _time_shift_provenance_checks(splits: Dict[str, List[Dict[str, Any]]]) -> List[Dict[str, Any]]:
+    issues: List[Dict[str, Any]] = []
+    date_re = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+    # Public-data signal window provenance:
+    # event dates should parse, be <= generated_at, and be within 730 days lookback.
+    max_lookback_days = 730
+    for split_name, tasks in splits.items():
+        for task in tasks:
+            task_id = task["task_id"]
             brief = task["input"]["hiring_signal_brief"]
-            g = str(brief["generated_at"])
-            f = str(brief["buying_window_signals"]["funding_event"]["closed_at"])
-            if "YYYY" in g or "YYYY" in f:
-                placeholder_hits.append(task["task_id"])
-            if not date_re.search(f):
-                placeholder_hits.append(task["task_id"])
+            generated_at_raw = str(brief.get("generated_at", ""))
+            try:
+                generated_at = datetime.fromisoformat(generated_at_raw.replace("Z", "+00:00"))
+            except Exception:
+                issues.append(
+                    {"task_id": task_id, "split": split_name, "field": "generated_at", "issue": "invalid_iso_datetime"}
+                )
+                continue
+
+            event_dates = {
+                "funding_closed_at": brief["buying_window_signals"]["funding_event"].get("closed_at"),
+                "layoff_date": brief["buying_window_signals"]["layoff_event"].get("date"),
+                "leadership_started_at": brief["buying_window_signals"]["leadership_change"].get("started_at"),
+            }
+            for field, value in event_dates.items():
+                raw = str(value or "")
+                if "YYYY" in raw:
+                    issues.append({"task_id": task_id, "split": split_name, "field": field, "issue": "placeholder_date"})
+                    continue
+                if not date_re.match(raw):
+                    issues.append({"task_id": task_id, "split": split_name, "field": field, "issue": "invalid_date_format"})
+                    continue
+                event_dt = datetime.fromisoformat(f"{raw}T00:00:00+00:00")
+                if event_dt > generated_at:
+                    issues.append({"task_id": task_id, "split": split_name, "field": field, "issue": "event_after_generation"})
+                lookback_days = (generated_at - event_dt).days
+                if lookback_days > max_lookback_days:
+                    issues.append(
+                        {
+                            "task_id": task_id,
+                            "split": split_name,
+                            "field": field,
+                            "issue": "outside_signal_window",
+                            "lookback_days": lookback_days,
+                        }
+                    )
+    return issues
+
+
+def contamination_report(splits: Dict[str, List[Dict[str, Any]]]) -> Dict[str, Any]:
+    train = splits["train"]
+    dev = splits["dev"]
+    held = splits["held_out"]
+    cosine_threshold = 0.85
+    held_vs_train = _compare_split_pairs(held=held, ref=train, ref_name="train", cosine_threshold=cosine_threshold)
+    held_vs_dev = _compare_split_pairs(held=held, ref=dev, ref_name="dev", cosine_threshold=cosine_threshold)
+    provenance_issues = _time_shift_provenance_checks(splits)
+
+    max_shared = max(
+        int(held_vs_train["ngram_overlap_8gram_max_shared_count"]),
+        int(held_vs_dev["ngram_overlap_8gram_max_shared_count"]),
+    )
+    max_cosine = max(
+        float(held_vs_train["embedding_similarity_max_cosine"]),
+        float(held_vs_dev["embedding_similarity_max_cosine"]),
+    )
+    flagged_ngram_pairs = int(held_vs_train["flagged_counts"]["ngram_pairs_flagged"]) + int(
+        held_vs_dev["flagged_counts"]["ngram_pairs_flagged"]
+    )
+    flagged_cos_pairs = int(held_vs_train["flagged_counts"]["embedding_pairs_flagged"]) + int(
+        held_vs_dev["flagged_counts"]["embedding_pairs_flagged"]
+    )
+    time_shift_tasks_flagged = len({row["task_id"] for row in provenance_issues})
+    is_pass = bool(held_vs_train["pass"] and held_vs_dev["pass"] and len(provenance_issues) == 0)
 
     return {
         "checks": {
-            "ngram_overlap_8gram_max_shared_count": max_8gram_overlap,
-            "ngram_overlap_threshold": "< 1 shared 8-gram between train and held_out",
-            "embedding_similarity_max_cosine": round(max_cosine, 4),
+            # Backward-compatible summary keys expected by merge script.
+            "ngram_overlap_8gram_max_shared_count": max_shared,
+            "ngram_overlap_threshold": "< 1 shared 8-gram between held_out and each reference split",
+            "embedding_similarity_max_cosine": round(max_cosine, 6),
             "embedding_similarity_threshold": "< 0.85",
-            "time_shift_placeholder_hits": placeholder_hits,
+            "time_shift_placeholder_hits": [row["task_id"] for row in provenance_issues if row["issue"] == "placeholder_date"],
+            "held_out_vs_train": {
+                "ngram_overlap_8gram_max_shared_count": held_vs_train["ngram_overlap_8gram_max_shared_count"],
+                "embedding_similarity_max_cosine": held_vs_train["embedding_similarity_max_cosine"],
+                "pass": held_vs_train["pass"],
+            },
+            "held_out_vs_dev": {
+                "ngram_overlap_8gram_max_shared_count": held_vs_dev["ngram_overlap_8gram_max_shared_count"],
+                "embedding_similarity_max_cosine": held_vs_dev["embedding_similarity_max_cosine"],
+                "pass": held_vs_dev["pass"],
+            },
+            "time_shift": {
+                "signal_window_days": 730,
+                "provenance_issue_count": len(provenance_issues),
+            },
         },
         "flagged_counts": {
             "ngram_pairs_flagged": flagged_ngram_pairs,
             "embedding_pairs_flagged": flagged_cos_pairs,
-            "time_shift_tasks_flagged": len(placeholder_hits),
+            "time_shift_tasks_flagged": time_shift_tasks_flagged,
         },
-        "samples": {"ngram_overlap_pairs_sample": overlap_pairs, "max_embedding_pair": max_cos_pair},
-        "pass": bool(max_8gram_overlap < 1 and max_cosine < 0.85 and len(placeholder_hits) == 0),
+        "samples": {
+            "held_out_vs_train": held_vs_train["samples"],
+            "held_out_vs_dev": held_vs_dev["samples"],
+            "time_shift_provenance_issues": provenance_issues[:25],
+        },
+        "pass": is_pass,
     }
 
 

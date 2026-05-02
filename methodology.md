@@ -65,6 +65,14 @@ Dataset built at `tenacious_bench_v0.1/` with:
 2. Source mode mix: trace-derived `72`, programmatic `72`, synthesis `60`, adversarial `36`
 3. Partitions: train `120`, dev `72`, held_out `48`
 
+Programmatic combinatorial slots (explicit):
+1. `company_size` (`startup`, `mid_market`, `enterprise`)
+2. `segment` (`segment_1..4`, `abstain`)
+3. `headcount_request` (requested engineer count)
+4. `stack` (`python/go/data/ml/infra/frontend`)
+5. `bench_state` (`tight` vs `healthy`)
+6. `ai_maturity_score` (derived from hiring signal brief)
+
 ### Data Construction Routing Policy
 1. `multi_llm_synthesis` uses two generator paths:
 - frontier hard-seed path (`claude_family`)
@@ -81,12 +89,11 @@ Dataset built at `tenacious_bench_v0.1/` with:
 - LLM-as-a-judge pointwise + pairwise filtering pattern (Gu et al., survey).
 - Preference-leakage avoidance by family rotation (Li et al., 2025).
 
-Contamination checks (`tenacious_bench_v0.1/contamination_check.json`):
-1. max shared 8-gram between train and held-out: `0`
-2. max input-embedding cosine between train and held-out: `0.7986`
-3. time-shift placeholder hits: `0`
-4. overall status: pass
-5. flagged pairs resolved: tasks were rewritten/deduplicated before held-out sealing until thresholds passed.
+Contamination checks (`generation_scripts/run_contamination_checks.py` -> `tenacious_bench_v0.1/contamination_check.json`):
+1. max shared 8-gram checks for both `held_out vs train` and `held_out vs dev`
+2. embedding cosine checks for both `held_out vs train` and `held_out vs dev` using cheap embedding backend
+3. time-shift provenance checks for public-signal dates with explicit signal-window bound
+4. structured report emits per-pair coverage, thresholds, flagged counts, and pass/fail status.
 
 Inter-rater snapshot (`tenacious_bench_v0.1/inter_rater_agreement.json`):
 1. sample size: `30`

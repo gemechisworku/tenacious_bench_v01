@@ -2,6 +2,8 @@
 
 Public benchmarks do not grade the failure modes that matter most for Tenacious sales execution: confidence-calibrated claims, bench-safe commitments, and thread-safe operational behavior.
 
+Explicit contrast with a named public benchmark: **τ²-Bench retail** primarily measures broad task completion and tool-use success under generic workflows, while Tenacious-Bench must additionally score sales-policy dimensions that retail does not directly encode: weak-signal softening, no unsupported capacity or pricing commitments, channel-policy legality, and thread/state consistency across outreach actions.
+
 Week 10 evidence shows this gap clearly. The probe replay in `week_10_artifacts/failure_taxonomy.md` reports an overall trigger rate of `76/280 (27.14%)`, with high-risk categories concentrated in outreach trust and execution safety. The largest buckets were `MTL-*` (multi-thread leakage, `32.5%`), `SIG-*` (hiring-signal over-claiming, `31.25%`), `BEN-*` (bench over-commitment, `29.17%`), and `GAP-*` (gap over-claiming, `29.17%`).
 
 The same pattern appears in trace behavior. In `trace_orch_d4cc1119b3cb`, enrichment correctly abstains at low segment confidence (`0.35`) and low AI maturity confidence (`0.35`), which is good behavior we must preserve. But nearby traces show reliability and control failures that generic language benchmarks ignore:
