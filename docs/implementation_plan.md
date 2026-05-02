@@ -252,10 +252,10 @@ Acceptance criteria:
 4. Cost-Pareto: per-task cost + latency with trained component vs without.
 
 Current status:
-1. Delta A: pending.
-2. Delta B: pending.
-3. Delta C: pending (depends on existing Week 10 retail score availability).
-4. Cost-Pareto: pending.
+1. Delta A: completed and significant (`mean diff +4.48`, `95% CI [3.68, 5.44]`, `p(one-sided)=0.0002`).
+2. Delta B: completed and negative (`mean diff -2.08`, `95% CI [-3.36, -0.96]`, `claim false`).
+3. Delta C: unavailable in final run (Week 10 retail comparator not provided at run time).
+4. Cost-Pareto: computed but low-informational due zero-cost assumptions in run config.
 
 ### Phase 4.3: Statistical Validation and Reporting
 1. Use paired bootstrap for confidence intervals.
@@ -271,22 +271,130 @@ ACT IV Deliverables:
 
 ## ACT V - Publish and Engage (Stage 5)
 
-### Phase 5.1: Public Dataset Release
-1. Publish `tenacious_bench_v0.1` to Hugging Face.
-2. Include datasheet, license, quickstart, baseline references.
+### Stage 5 Objective
+Ship public artifacts that are reproducible by a third party and honestly represent Delta A/Delta B outcomes.
 
-### Phase 5.2: Public Model/Judge Release
-1. Publish LoRA adapter/judge artifact as appropriate.
-2. Add full model card with limitations and evaluation summary.
+### Phase 5.0: Decision Freeze (Must Confirm Before Publishing)
+1. Hugging Face namespace: user/org handle to publish under.
+2. Dataset visibility mode: public now vs gated.
+3. Model visibility mode: public now vs gated.
+4. Community route: GitHub issue (recommended) vs workshop/other route.
+5. Blog host: Hugging Face community article vs personal site/Substack.
+6. Citation mode: whether to mint DOI on Hugging Face for dataset and model.
 
-### Phase 5.3: Technical Communication
-1. Publish 1200-2000 word technical blog with methods and honest findings.
-2. Publish one community engagement artifact (per decision checkpoint).
+Resolved decisions (confirmed on 2026-05-02):
+1. Namespace owner type: user account (uploader will publish manually).
+2. Dataset visibility: public.
+3. Model visibility: public.
+4. Split/file naming: keep current local structure (`train/dev/held_out`) and document mapping clearly.
+5. DOI: skipped for this release.
+6. Blog destination: Hugging Face community article (content can be reused elsewhere).
+7. Community engagement artifact: user will submit manually; provide guidance + template.
 
-### Phase 5.4: Executive Packaging
-1. Produce two-page memo with deployment recommendation + skeptic appendix.
-2. Produce evidence graph mapping each numeric claim to source artifacts.
-3. Record and publish demo video (<=6 minutes).
+### Phase 5.1: Public Dataset Release (Hugging Face)
+Execution references (official):
+1. Hub dataset upload + dataset card flow: `https://huggingface.co/docs/hub/en/datasets-adding`
+2. Dataset card metadata format (YAML in `README.md`): `https://huggingface.co/docs/hub/datasets-cards`
+3. File naming for auto split detection (`train/validation/test`) and manual config option: `https://huggingface.co/docs/hub/datasets-file-names-and-splits`
+
+Publishing checklist:
+1. Create dataset repo: `<HF_NAMESPACE>/tenacious_bench_v0.1`.
+2. Upload artifacts:
+   - `train/tasks.jsonl`
+   - `dev/tasks.jsonl`
+   - `held_out/tasks.jsonl`
+   - `datasheet.md` (also linked from dataset card)
+   - `contamination_check.json`
+   - `inter_rater_agreement.json`
+   - `merge_report.json`
+3. Add dataset card `README.md` with YAML metadata at top including at minimum:
+   - `pretty_name`
+   - `license`
+   - `task_categories`
+   - tags for discoverability
+4. Add a 10-minute quickstart section showing `load_dataset(...)` usage and local evaluator command.
+5. Add baseline + prompt-only + trained held-out summary table with exact ACT IV numbers and CI.
+6. Add explicit caveat that held-out labels are machine rubric outcomes and hard-policy dimensions remain challenging.
+7. Optional but recommended: generate DOI from Hugging Face repo settings after final naming freeze.
+
+Acceptance criteria:
+1. Dataset page loads and renders card sections.
+2. Dataset viewer works (or card clearly documents manual loading path).
+3. README contains all required provenance, limitations, and reproducibility links.
+
+### Phase 5.2: Public Model/Judge Release (Path B LoRA Adapter)
+Execution references (official):
+1. Model card requirements + metadata fields: `https://huggingface.co/docs/hub/en/model-cards`
+2. PEFT adapter push flow (`model.push_to_hub(...)`): `https://huggingface.co/docs/trl/en/peft_integration`
+
+Current repo gap:
+1. Adapter directory is not yet synced in `training/` (config/log/metrics are present).
+
+Publishing checklist:
+1. Sync adapter weights directory from Colab run into repo workspace (e.g., `training/tenacious_path_b_dpo_lora/`).
+2. Create model repo: `<HF_NAMESPACE>/tenacious-pathb-dpo-lora-v0.1`.
+3. Upload only adapter artifacts + tokenizer/config files needed for inference.
+4. Add model card `README.md` with:
+   - base model (`unsloth/Qwen2.5-3B-Instruct-bnb-4bit` lineage)
+   - `library_name` metadata set explicitly
+   - dataset reference to published dataset ID
+   - intended use + out-of-scope use
+   - limitations and known failure modes (capacity over-commit, TCV specificity, discounting)
+   - full training setup (seed, lr, epochs, batch/accum, max length)
+   - ACT IV evaluation summary (Delta A positive, Delta B negative)
+5. Include safe usage note: this adapter is benchmark-oriented and not a production policy guarantee.
+6. Optional but recommended: generate DOI after final card freeze.
+
+Acceptance criteria:
+1. Model repo has reproducible load instructions (`PeftModel.from_pretrained` path).
+2. Card clearly links dataset + methodology + ablation artifacts.
+3. Honest reporting includes negative Delta B result.
+
+### Phase 5.3: Technical Communication (Blog)
+Execution references:
+1. Hugging Face blog supports community posting via "New Article": `https://huggingface.co/blog`
+
+Required structure (`1200-2000` words):
+1. Gap: what generic benchmarks missed in Tenacious context.
+2. Audit method: how Week 10 evidence was transformed into benchmark requirements.
+3. Dataset design decisions: routing, judge filtering, contamination controls.
+4. Training experiment details: why Path B, what changed (Fix 1/2/3), what failed.
+5. Honest result: Delta A CI/p-value and Delta B non-win.
+6. Next work: hard-policy robustness and cost-aware evaluation rerun.
+
+Acceptance criteria:
+1. Includes direct links to dataset repo, model repo, `ablation_results.json`, and traces.
+2. Includes one explicit "what did not work" subsection.
+
+### Phase 5.4: Community Engagement Artifact
+Primary recommended route (fastest):
+1. Open GitHub issue on `sierra-research/tau2-bench` with benchmark-gap report and links.
+2. GitHub issue creation flow reference: `https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/creating-an-issue`
+3. Repo currently exposes Issues tab publicly (Discussions not guaranteed enabled): `https://github.com/sierra-research/tau2-bench`
+
+Issue template outline:
+1. Problem statement: Tenacious-specific gaps not fully covered.
+2. Minimal reproducible evidence: 2-3 trace excerpts + failure taxonomy.
+3. Artifact links: dataset/model/blog + one figure/table.
+4. Suggested follow-up benchmark slice or protocol.
+
+Alternative route warning:
+1. Workshop-style routes are timeline-risky for immediate Day-7 packaging.
+2. NeurIPS 2026 paper deadlines are near-term (`May 4-6, 2026` AoE): `https://neurips.cc/Conferences/2026`
+3. NeurIPS ED-track scope update reference: `https://blog.neurips.cc/2026/03/23/introducing-the-evaluations-datasets-track-at-neurips-2026/`
+
+### Phase 5.5: Executive Packaging
+1. `memo.pdf` (2 pages)
+   - Page 1: deployment recommendation, lift, CI, and cost/latency caveat.
+   - Page 2: skeptic appendix, unresolved failure, kill-switch trigger.
+2. `evidence_graph.json`
+   - every headline numeric claim mapped to source file + JSON path.
+3. demo video (`<=6` minutes)
+   - run one held-out sample, show evaluator outcome, show publication pages.
+
+Acceptance criteria:
+1. All public claims trace back to versioned local artifacts.
+2. Memo states one clear go/no-go recommendation.
 
 Deliverables:
 1. Hugging Face dataset URL
@@ -319,6 +427,20 @@ Mitigation: automated contamination checks on every partition update.
 Mitigation: publish honest negative result; treat as method finding, not failure to report.
 5. Risk: Time overrun near publication.
 Mitigation: prioritize reproducibility and required artifacts over optional polish.
+
+## Sources Used for Stage 5 Publication Plan
+1. Hugging Face dataset upload flow: https://huggingface.co/docs/hub/en/datasets-adding
+2. Hugging Face dataset cards metadata: https://huggingface.co/docs/hub/datasets-cards
+3. Hugging Face dataset file names and split rules: https://huggingface.co/docs/hub/datasets-file-names-and-splits
+4. Hugging Face model cards metadata and eval fields: https://huggingface.co/docs/hub/en/model-cards
+5. PEFT adapter save/push flow in TRL docs: https://huggingface.co/docs/trl/en/peft_integration
+6. Hugging Face CLI auth/upload guidance: https://huggingface.co/docs/huggingface_hub/main/en/guides/cli
+7. Hugging Face DOI support for models/datasets: https://huggingface.co/docs/hub/en/doi
+8. Hugging Face community blog page ("New Article"): https://huggingface.co/blog
+9. GitHub issue creation flow: https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/creating-an-issue
+10. `sierra-research/tau2-bench` repository (issues availability): https://github.com/sierra-research/tau2-bench
+11. NeurIPS 2026 conference deadlines: https://neurips.cc/Conferences/2026
+12. NeurIPS ED-track scope update (Mar 23, 2026): https://blog.neurips.cc/2026/03/23/introducing-the-evaluations-datasets-track-at-neurips-2026/
 
 ## Sources Used for Stage 3 Method Choice
 1. Direct Preference Optimization (Rafailov et al., 2023): https://arxiv.org/abs/2305.18290

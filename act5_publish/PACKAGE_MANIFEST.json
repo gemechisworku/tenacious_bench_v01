@@ -1,0 +1,96 @@
+﻿{
+    "generated_at_utc":  "2026-05-02T14:16:38.9678018Z",
+    "package_root":  "D:\\FDE-Training\\week-11\\tenacious_bench_v0.1\\act5_publish",
+    "files":  [
+                  {
+                      "path":  "ACT_V_OPERATOR_GUIDE.md",
+                      "size_bytes":  4480,
+                      "sha256":  "0A9A4701A86A6FD6C7C438076B766F33065015A768549EDC00AB69514C89B98D"
+                  },
+                  {
+                      "path":  "comms/community_issue_template.md",
+                      "size_bytes":  1692,
+                      "sha256":  "64F36232019CDE7A8E9D451B6AA5C1677143751C6A6CA83AF1CA4811CDF4EE7C"
+                  },
+                  {
+                      "path":  "comms/hf_blog_post_draft.md",
+                      "size_bytes":  3145,
+                      "sha256":  "9C62EBC109B95166513A00A493E7BF2E56D897732BE404BAC6D11B3C8F715DED"
+                  },
+                  {
+                      "path":  "dataset/contamination_check.json",
+                      "size_bytes":  654,
+                      "sha256":  "4DDCF53601FB11FB9D2101DC8A10361727A23F132CCE410AF49BE0FC2A66F8D6"
+                  },
+                  {
+                      "path":  "dataset/datasheet.md",
+                      "size_bytes":  6821,
+                      "sha256":  "130B3FC81434103EBA0E1060BCCD5973621E252DC14EBA6C6CC333D52FDBE5AD"
+                  },
+                  {
+                      "path":  "dataset/dev/tasks.jsonl",
+                      "size_bytes":  196849,
+                      "sha256":  "242F97CB3CBCF14423C24F5D28621802BB9CAE90D33A53908871DAE8CE6A4403"
+                  },
+                  {
+                      "path":  "dataset/held_out/tasks.jsonl",
+                      "size_bytes":  131299,
+                      "sha256":  "BF650F17CA00581BE2D5206DF10099E81970514931CB1BCEE24BBA4B60B265EB"
+                  },
+                  {
+                      "path":  "dataset/inter_rater_agreement.json",
+                      "size_bytes":  12114,
+                      "sha256":  "F30CBE9708E8E9B54E1CBC5E95FF5C5625D6C7B32D0DB5AA39995042E028DB1D"
+                  },
+                  {
+                      "path":  "dataset/merge_report.json",
+                      "size_bytes":  722,
+                      "sha256":  "6AC78CBB40712894EE18817ADD0B154715B7443F83FC147B78FF6D7E0EA6941E"
+                  },
+                  {
+                      "path":  "dataset/README.md",
+                      "size_bytes":  2470,
+                      "sha256":  "6B4391934A038EC33808D14A43440D13A361ED16F95A11A91CB49A7D3994F228"
+                  },
+                  {
+                      "path":  "dataset/train/tasks.jsonl",
+                      "size_bytes":  328238,
+                      "sha256":  "5A57CF3640B8672365AE30CB96BC8D273E4B49F8A9A471CC822D448B8694602B"
+                  },
+                  {
+                      "path":  "evidence/ablation_results.json",
+                      "size_bytes":  2542,
+                      "sha256":  "D21CFD39597B4ED96C72C0A4F3D814CCD7E54247AE4A8736DC9DBD627FFBC519"
+                  },
+                  {
+                      "path":  "evidence/held_out_traces.jsonl",
+                      "size_bytes":  147014,
+                      "sha256":  "0B406CF0FA64D414F08158D29FCAA8052D7D74DA9834E0B8E129D6A444B8A2B4"
+                  },
+                  {
+                      "path":  "evidence/training_config.yaml",
+                      "size_bytes":  386,
+                      "sha256":  "60522FD904375E38691A3E6AEC238BD0DF8E6BB0012FB81FA1EDE0D1E3912EEF"
+                  },
+                  {
+                      "path":  "evidence/training_metrics.json",
+                      "size_bytes":  207,
+                      "sha256":  "E4BC8352E20EC2CE03D5FDB7B99D79E54443F4F447EB7E943E0D393600B5C27B"
+                  },
+                  {
+                      "path":  "evidence/training_run.log",
+                      "size_bytes":  22180,
+                      "sha256":  "21F9D0285885E03494B47EE31A905A14BCA31D83FEF5A482E9989AA58187B2B8"
+                  },
+                  {
+                      "path":  "model/ADD_ADAPTER_FILES_HERE.md",
+                      "size_bytes":  275,
+                      "sha256":  "C30E1A0F500C5A242F799BA9D0625CF6D9D53340415CC420763FB52988DE5C54"
+                  },
+                  {
+                      "path":  "model/README.md",
+                      "size_bytes":  2467,
+                      "sha256":  "EB74628BD13968413D7C3A1E2DF6A907EC4545BBF0733406700532F6957B6C2D"
+                  }
+              ]
+}

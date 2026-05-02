@@ -1,0 +1,27 @@
+{
+  "synth_root": "tenacious_bench_synth_only",
+  "other_root": "tenacious_bench_other_only",
+  "out_root": "tenacious_bench_v0.1",
+  "synth_tasks_loaded": 62,
+  "other_tasks_loaded": 188,
+  "combined_before_dedupe": 250,
+  "duplicates_dropped_by_task_id": 0,
+  "total_after_dedupe": 250,
+  "expected_total": 250,
+  "expected_total_match": true,
+  "split_counts": {
+    "train": 125,
+    "dev": 75,
+    "held_out": 50
+  },
+  "split_seed_selected": 304,
+  "split_search_tries": 2000,
+  "source_mode_counts": {
+    "multi_llm_synthesis": 62,
+    "trace_derived": 75,
+    "programmatic": 75,
+    "hand_authored_adversarial": 38
+  },
+  "contamination_pass": true,
+  "inter_rater_overall_pct": 100.0
+}
